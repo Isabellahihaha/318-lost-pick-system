@@ -2,8 +2,8 @@
 
 ## Microservice Architecture
 This application contains two **Microservice Modules**:
-- **Browsing Service** (`lost-service`)
-- **Posting Service** (`found-service`)
+- **Lost Service** (`lost-service`)
+- **Found Service** (`found-service`)
 
 ## Layered Architecture
 Each microservice module is structured into four distinct layers:

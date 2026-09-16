@@ -2,8 +2,8 @@
 
 ## Microservice Architecture
 This application contains two **Microservice Modules**:
-- **Lost Service** (`lost-service`)
-- **Found Service** (`found-service`)
+- **Browsing Service** (`lost-service`)
+- **Posting Service** (`found-service`)
 
 ## Layered Architecture
 Each microservice module is structured into four distinct layers:
@@ -14,8 +14,8 @@ Each microservice module is structured into four distinct layers:
 
 ## Repository Structure 
 The project is structured as a multi-module Maven repository:
-- `lost-service`: Module for managing lost item registrations, updates, deletions, and queries.
-- `found-service`: Module for managing found item registrations, status checks, and item matching logic.
+- `lost-service`: Module for browsing found item registries, posting lost item requests.
+- `found-service`: Module for managing found item registries, status checks, status updates, information updates, item deletion.
 
 ## Technology Stack
 - **JDK & Build**: Java 21, Apache Maven (Multi-module POM)
@@ -24,7 +24,7 @@ The project is structured as a multi-module Maven repository:
     - **Service Layer**: `@Service`
     - **Domain Layer**: `@Entity`
     - **Data Access Layer**: `@Repository` / Spring Data JPA
-- **Database**: H2 in-memory database for development
+- **Database**: H2 in-memory database for development, SQLite
 - **AI / Agentic Integration**: LangChain4j (`langchain4j-open-ai`, `langchain4j-google-ai-gemini`)
 - **Unit & Integration Testing**: `MockMvc`, `@SpringBootTest`, `JUnit 5`
 

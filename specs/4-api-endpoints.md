@@ -1,4 +1,4 @@
-# API Endpoints Specification: Lost & Found Platform
+# API Endpoints Summary: Lost & Found Platform
 
 This document exposes the microservice user stories as external REST API endpoints, designed for human comprehension and integration test generation.
 

@@ -4,26 +4,41 @@ This document exposes the microservice user stories as external REST API endpoin
 
 ---
 
-## 1. Summary of API Endpoints
+## 1. Lost Item Service (`http://localhost:8081/api`)
 
-| Method | Endpoint Path | Microservice | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/lost-items` | Lost Item Service | Report a new lost item |
-| `GET` | `/api/lost-items/{id}` | Lost Item Service | Retrieve details of a specific lost item |
-| `POST` | `/api/found-items` | Found Item Service | Report a new found item |
-| `GET` | `/api/matches` | Matching Service | Query AI-assisted potential matches |
-| `POST` | `/api/claims` | Claim Service | Submit an ownership claim for an item |
+| Feature | Method | Endpoint Path | Request Body | Response (Success) | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **LI1** | `POST` | `/lost-items` | `LostItemRequest` | `201 Created` (`LostItemResponse`) | Report a new lost item |
+| **LI2** | `GET` | `/lost-items/{id}` | *None* | `200 OK` (`LostItemResponse`) | Retrieve details of a specific lost item |
 
 ---
 
-## 2. Detailed Endpoint Descriptions & OpenAPI Definition
+## 2. Found Item Service (`http://localhost:8082/api`)
 
-### Report Lost Item
-* **Path:** `/api/lost-items`
-* **Method:** `POST`
-* **Description:** Allows a user to submit a lost item report with descriptive attributes.
+| Feature | Method | Endpoint Path | Request Body | Response (Success) | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **FI1** | `POST` | `/found-items` | `FoundItemRequest` | `201 Created` (`FoundItemResponse`) | Report a new found item |
 
-#### OpenAPI Spec (`yaml`)
+---
+
+## 3. Matching Service (`http://localhost:8083/api`)
+
+| Feature | Method | Endpoint Path | Request Body | Response (Success) | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **MS1** | `GET` | `/matches` | *None* | `200 OK` (`Array<MatchResponse>`) | Query AI-assisted potential matches |
+
+---
+
+## 4. Claim Service (`http://localhost:8084/api`)
+
+| Feature | Method | Endpoint Path | Request Body | Response (Success) | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CS1** | `POST` | `/claims` | `ClaimRequest` | `201 Created` (`ClaimResponse`) | Submit an ownership claim for an item |
+
+---
+
+## 5. Detailed OpenAPI Definition (`/api/lost-items`)
+
 ```yaml
 paths:
   /api/lost-items:
@@ -58,6 +73,11 @@ paths:
                   example: "2026-09-15"
       responses:
         '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LostItemResponse'
           description: Created successfully
           content:
             application/json:

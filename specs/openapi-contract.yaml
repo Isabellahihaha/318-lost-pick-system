@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Microservice Lost & Found Platform API Specification
   description: OpenAPI 3.0 specification for Lost Item Service, Found Item Service, Matching Service, and Claim Service microservices based on user stories.
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: http://localhost:8081/api
     description: Lost Item Service Local Development Server
@@ -15,33 +15,47 @@ servers:
 
 tags:
   - name: Lost Item Service
-    description: Endpoints for reporting and managing lost items[cite: 1]
+    description: Endpoints for reporting and managing lost items
   - name: Found Item Service
-    description: Endpoints for reporting and managing found items[cite: 1]
+    description: Endpoints for reporting and managing found items
   - name: Matching Service
-    description: Endpoints for AI-assisted potential item matches[cite: 1]
+    description: Endpoints for AI-assisted potential item matches
   - name: Claim Service
-    description: Endpoints for submitting item ownership claims[cite: 1]
+    description: Endpoints for submitting item ownership claims
 
 paths:
   # ==========================================
   # LOST ITEM SERVICE ENDPOINTS
   # ==========================================
   /lost-items:
+    get:
+      tags:
+        - Lost Item Service
+      summary: List all lost items
+      operationId: getAllLostItems
+      responses:
+        '200':
+          description: List of all lost items retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LostItemResponse'
     post:
       tags:
         - Lost Item Service
-      summary: Report a lost item[cite: 1]
-      operationId: createLostItem[cite: 1]
+      summary: Report a lost item
+      operationId: createLostItem
       requestBody:
-        required: true[cite: 1]
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LostItemRequest'
       responses:
         '201':
-          description: Created successfully[cite: 1]
+          description: Created successfully
           content:
             application/json:
               schema:
@@ -53,8 +67,8 @@ paths:
     get:
       tags:
         - Lost Item Service
-      summary: Retrieve details of a specific lost item[cite: 1]
-      operationId: getLostItemById[cite: 1]
+      summary: Retrieve details of a specific lost item
+      operationId: getLostItemById
       parameters:
         - name: id
           in: path
@@ -64,11 +78,57 @@ paths:
             type: integer
       responses:
         '200':
-          description: Lost item details retrieved successfully[cite: 1]
+          description: Lost item details retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LostItemResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Lost Item Service
+      summary: Update an existing lost item's details or status
+      operationId: updateLostItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the lost item
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LostItemRequest'
+      responses:
+        '200':
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LostItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Lost Item Service
+      summary: Delete a lost item record
+      operationId: deleteLostItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the lost item
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted successfully (No Content)
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -76,10 +136,24 @@ paths:
   # FOUND ITEM SERVICE ENDPOINTS
   # ==========================================
   /found-items:
+    get:
+      tags:
+        - Found Item Service
+      summary: List all found items
+      operationId: getAllFoundItems
+      responses:
+        '200':
+          description: List of found items retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoundItemResponse'
     post:
       tags:
         - Found Item Service
-      summary: Report a new found item[cite: 1]
+      summary: Report a new found item
       operationId: createFoundItem
       requestBody:
         required: true
@@ -89,13 +163,82 @@ paths:
               $ref: '#/components/schemas/FoundItemRequest'
       responses:
         '201':
-          description: Created successfully[cite: 1]
+          description: Created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FoundItemResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
+
+  /found-items/{id}:
+    get:
+      tags:
+        - Found Item Service
+      summary: Retrieve details of a specific found item
+      operationId: getFoundItemById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the found item
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found item details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoundItemResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Found Item Service
+      summary: Update an existing found item's details or status
+      operationId: updateFoundItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the found item
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoundItemRequest'
+      responses:
+        '200':
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoundItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Found Item Service
+      summary: Delete a found item record
+      operationId: deleteFoundItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the found item
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted successfully (No Content)
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # ==========================================
   # MATCHING SERVICE ENDPOINTS
@@ -104,11 +247,11 @@ paths:
     get:
       tags:
         - Matching Service
-      summary: Query AI-assisted potential matches[cite: 1]
+      summary: Query AI-assisted potential matches
       operationId: queryMatches
       responses:
         '200':
-          description: List of AI-assisted potential matches retrieved successfully[cite: 1]
+          description: List of AI-assisted potential matches retrieved successfully
           content:
             application/json:
               schema:
@@ -123,7 +266,7 @@ paths:
     post:
       tags:
         - Claim Service
-      summary: Submit an ownership claim for an item[cite: 1]
+      summary: Submit an ownership claim for an item
       operationId: createClaim
       requestBody:
         required: true
@@ -133,7 +276,7 @@ paths:
               $ref: '#/components/schemas/ClaimRequest'
       responses:
         '201':
-          description: Created successfully[cite: 1]
+          description: Created successfully
           content:
             application/json:
               schema:
@@ -156,24 +299,24 @@ components:
         - lostDate
       properties:
         userId:
-          type: integer[cite: 1]
-          example: 1[cite: 1]
+          type: integer
+          example: 1
         itemName:
-          type: string[cite: 1]
-          example: "AirPods Pro"[cite: 1]
+          type: string
+          example: "AirPods Pro"
         category:
-          type: string[cite: 1]
-          example: "Electronics"[cite: 1]
+          type: string
+          example: "Electronics"
         description:
-          type: string[cite: 1]
-          example: "White AirPods Pro with a pink protective case"[cite: 1]
+          type: string
+          example: "White AirPods Pro with a pink protective case"
         location:
-          type: string[cite: 1]
-          example: "UOW Library"[cite: 1]
+          type: string
+          example: "UOW Library"
         lostDate:
-          type: string[cite: 1]
-          format: date[cite: 1]
-          example: "2026-09-15"[cite: 1]
+          type: string
+          format: date
+          example: "2026-09-15"
 
     LostItemResponse:
       type: object
@@ -182,27 +325,27 @@ components:
           type: integer
           example: 101
         userId:
-          type: integer[cite: 1]
-          example: 1[cite: 1]
+          type: integer
+          example: 1
         itemName:
-          type: string[cite: 1]
-          example: "AirPods Pro"[cite: 1]
+          type: string
+          example: "AirPods Pro"
         category:
-          type: string[cite: 1]
-          example: "Electronics"[cite: 1]
+          type: string
+          example: "Electronics"
         description:
-          type: string[cite: 1]
-          example: "White AirPods Pro with a pink protective case"[cite: 1]
+          type: string
+          example: "White AirPods Pro with a pink protective case"
         location:
-          type: string[cite: 1]
-          example: "UOW Library"[cite: 1]
+          type: string
+          example: "UOW Library"
         lostDate:
-          type: string[cite: 1]
-          format: date[cite: 1]
-          example: "2026-09-15"[cite: 1]
+          type: string
+          format: date
+          example: "2026-09-15"
         status:
           type: string
-          example: "REPORTED"
+          example: "OPEN"
 
     FoundItemRequest:
       type: object
@@ -253,7 +396,7 @@ components:
           example: "2026-09-16"
         status:
           type: string
-          example: "AVAILABLE"
+          example: "UNCLAIMED"
 
     MatchResponse:
       type: object
@@ -273,7 +416,7 @@ components:
           example: 0.95
         matchStatus:
           type: string
-          example: "PENDING_VERIFICATION"
+          example: "SUGGESTED"
 
     ClaimRequest:
       type: object

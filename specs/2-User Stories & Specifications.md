@@ -4,13 +4,13 @@
 
 | Service Module | User Story ID | User Story Name | Role(s) |
 | :--- | :--- | :--- | :--- |
-| User Service | U1 | Register and manage user profiles | Student, Admin |
+| User Service | U1 | Register and manage user profiles | User, Admin |
 | Lost Service | B1 | Create / Update / Delete a lost item request | User, Admin |
 | Lost Service | B2 | List all lost items | User, Admin |
-| Found Service | L1 | Create / Update / Delete a found item registry | User, Finder, Admin |
+| Found Service | L1 | Create / Update / Delete a found item registry | User, Admin |
 | Found Service | L2 | List all registered found items | User, Admin |
 | Matching Service | M1 | AI-powered text matching & similarity scoring | User, System |
-| Claim Service | C1 | Submit and verify ownership claims | User, Finder, Admin |
+| Claim Service | C1 | Submit and verify ownership claims | User, Admin |
 
 ---
 
@@ -27,7 +27,7 @@ All item records (lost or found) share the following core attributes across resp
 
 ## 1. User Management Service (`user-service`)
 ### User Story U1: User Profile & Identity Management
-- **As a User**, I want to register an account with my name, email, and university role so I can report lost items and submit ownership claims.
+- **As a User**, I want to register an account with name, email, and student/staff number can report lost items and submit ownership claims.
 - **As an Admin**, I want to manage user accounts and system permissions.
 
 ---
@@ -44,7 +44,7 @@ All item records (lost or found) share the following core attributes across resp
 
 ## 3. Found Item Service (`found-service`)
 ### User Story L1: Create / Update / Delete a found item registry
-- **As a Finder/Admin**, I want to create a found item record when an item is discovered, setting status to `UNCLAIMED`.
+- **As a User/Admin**, I want to create a found item record when an item is discovered, setting status to `UNCLAIMED`.
 - **As a User/Admin**, I want to update or remove found item registry entries.
 
 ### User Story L2: List all found items

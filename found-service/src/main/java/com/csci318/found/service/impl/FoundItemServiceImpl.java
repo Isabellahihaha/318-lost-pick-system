@@ -25,8 +25,17 @@ public class FoundItemServiceImpl implements FoundItemService {
 
     @Override
     public FoundItemResponse createFoundItem(FoundItemRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Request payload cannot be null");
+        }
+        if (request.getFinderId() == null) {
+            throw new IllegalArgumentException("Finder ID is required");
+        }
         if (request.getItemName() == null || request.getItemName().trim().isEmpty()) {
             throw new IllegalArgumentException("Item name cannot be empty");
+        }
+        if (request.getCategory() == null || request.getCategory().trim().isEmpty()) {
+            throw new IllegalArgumentException("Category cannot be empty");
         }
         FoundItem item = new FoundItem();
         item.setFinderId(request.getFinderId());

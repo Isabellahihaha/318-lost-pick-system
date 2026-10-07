@@ -69,7 +69,21 @@ public class LostItemControllerTest {
     public void testGetNonExistentLostItemReturns404() throws Exception {
         mockMvc.perform(get("/api/lost-items/99999"))
                 .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    public void testCreateLostItemInvalidPayloadReturns400() throws Exception {
+        LostItemRequest invalidReq = new LostItemRequest();
+        invalidReq.setItemName(""); // Empty item name triggers IllegalArgumentException
+
+        mockMvc.perform(post("/api/lost-items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidReq)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test

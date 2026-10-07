@@ -25,8 +25,17 @@ public class LostItemServiceImpl implements LostItemService {
 
     @Override
     public LostItemResponse createLostItem(LostItemRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Request payload cannot be null");
+        }
+        if (request.getUserId() == null) {
+            throw new IllegalArgumentException("User ID is required");
+        }
         if (request.getItemName() == null || request.getItemName().trim().isEmpty()) {
             throw new IllegalArgumentException("Item name cannot be empty");
+        }
+        if (request.getCategory() == null || request.getCategory().trim().isEmpty()) {
+            throw new IllegalArgumentException("Category cannot be empty");
         }
         LostItem item = new LostItem();
         item.setUserId(request.getUserId());

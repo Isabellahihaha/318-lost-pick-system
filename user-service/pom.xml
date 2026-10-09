@@ -9,10 +9,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>found-service</artifactId>
+    <artifactId>user-service</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>found-service</name>
-    <description>Found Service Module for Lost Pick Platform</description>
+    <name>user-service</name>
+    <description>User Service Module for Lost Pick Platform (accounts, register/login)</description>
 
     <dependencies>
         <dependency>

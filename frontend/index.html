@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost &amp; Found</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* ============================= TOKENS ============================= */
+  :root{
+    --bg:#FAF8F3;
+    --surface:#FFFFFF;
+    --surface-sidebar:#F4F0E6;
+    --surface-hover:#ECE7D9;
+    --border:#E3DCC9;
+    --border-strong:#CFC5AA;
+    --text:#252017;
+    --text-muted:#7C7566;
+    --text-faint:#A79E8C;
+    --lost:#DD6A2C;
+    --lost-strong:#B8531F;
+    --lost-soft:#FBE8D9;
+    --found:#0E8F9C;
+    --found-strong:#0B717C;
+    --found-soft:#DDF1F0;
+    --danger:#C43D3D;
+    --shadow-s:0 1px 2px rgba(37,32,23,.06);
+    --shadow-m:0 10px 30px -14px rgba(37,32,23,.28);
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+    --focus:#0E8F9C;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#171512;
+      --surface:#1E1B17;
+      --surface-sidebar:#1A1815;
+      --surface-hover:#262320;
+      --border:#332E26;
+      --border-strong:#433C31;
+      --text:#F2EEE4;
+      --text-muted:#AC9F92;
+      --text-faint:#726A5C;
+      --lost:#F0813F;
+      --lost-strong:#F5A06C;
+      --lost-soft:#3A2416;
+      --found:#38B6C1;
+      --found-strong:#79D6DE;
+      --found-soft:#0F3236;
+      --danger:#E37272;
+      --shadow-s:0 1px 2px rgba(0,0,0,.4);
+      --shadow-m:0 14px 32px -14px rgba(0,0,0,.65);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#171512;
+    --surface:#1E1B17;
+    --surface-sidebar:#1A1815;
+    --surface-hover:#262320;
+    --border:#332E26;
+    --border-strong:#433C31;
+    --text:#F2EEE4;
+    --text-muted:#AC9F92;
+    --text-faint:#726A5C;
+    --lost:#F0813F;
+    --lost-strong:#F5A06C;
+    --lost-soft:#3A2416;
+    --found:#38B6C1;
+    --found-strong:#79D6DE;
+    --found-soft:#0F3236;
+    --danger:#E37272;
+    --shadow-s:0 1px 2px rgba(0,0,0,.4);
+    --shadow-m:0 14px 32px -14px rgba(0,0,0,.65);
+  }
+
+  /* ============================= BASE ============================= */
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Work Sans',system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+  }
+  h1,h2,h3,.brand,.nav-item,.btn,.pill,.tab{font-family:'Sora',system-ui,sans-serif;}
+  h1,h2,h3{margin:0;text-wrap:balance;}
+  p{margin:0;}
+  button{font:inherit;cursor:pointer;}
+  input,textarea,select{font:inherit;color:inherit;}
+  a{color:var(--found-strong);}
+  ::selection{background:var(--found-soft);}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px;}
+
+  .screen{width:100%;}
+
+  /* ============================= AUTH ============================= */
+  #screen-auth{
+    min-height:100svh;
+    display:flex;align-items:center;justify-content:center;
+    padding:32px 16px;
+  }
+  .auth-card{
+    width:100%;max-width:380px;
+    display:flex;flex-direction:column;align-items:center;gap:22px;
+  }
+  .auth-mark{
+    width:76px;height:76px;border-radius:50%;
+    background:var(--surface);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow-m);
+  }
+  .auth-heading{text-align:center;display:flex;flex-direction:column;gap:6px;}
+  .auth-heading h1{font-size:22px;font-weight:700;}
+  .auth-heading p{color:var(--text-muted);font-size:13.5px;}
+  .auth-form{width:100%;display:flex;flex-direction:column;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;width:100%;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--text-muted);}
+  .field input,.field textarea,.field select{
+    width:100%;padding:11px 14px;border-radius:var(--radius-s);
+    border:1px solid var(--border-strong);background:var(--surface);color:var(--text);
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--found);}
+  .field-row{display:flex;gap:12px;}
+  .field-row .field{flex:1;min-width:0;}
+  .auth-submit{margin-top:4px;}
+  .auth-switch{font-size:13.5px;color:var(--text-muted);text-align:center;}
+  .auth-switch button{background:none;border:none;color:var(--found-strong);font-weight:600;padding:0;}
+  .auth-tip{font-size:12px;color:var(--text-faint);text-align:center;}
+  .auth-error{font-size:12.5px;color:var(--danger);min-height:16px;text-align:center;}
+
+  /* ============================= BUTTONS ============================= */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 18px;border-radius:999px;border:1px solid transparent;
+    font-weight:600;font-size:14px;white-space:nowrap;transition:transform .12s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:linear-gradient(135deg,var(--found) 0%,var(--found-strong) 100%);color:#fff;}
+  .btn-secondary{background:var(--surface);border-color:var(--border-strong);color:var(--text);}
+  .btn-ghost{background:transparent;border-color:transparent;color:var(--text-muted);}
+  .btn-block{width:100%;}
+  .btn-danger-ghost{background:transparent;color:var(--danger);border-color:transparent;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* ============================= APP SHELL ============================= */
+  .app-shell{display:flex;min-height:100svh;}
+  .sidebar{
+    width:230px;flex:none;background:var(--surface-sidebar);
+    border-right:1px solid var(--border);
+    display:flex;flex-direction:column;
+    padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));
+    gap:22px;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:0 4px;}
+  .brand-mark{flex:none;}
+  .profile{display:flex;align-items:center;gap:10px;padding:10px 4px;}
+  .avatar{
+    width:40px;height:40px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--found-soft),var(--lost-soft));
+    color:var(--found-strong);font-weight:700;font-size:14px;
+    border:1px solid var(--border);
+  }
+  .profile-text{min-width:0;}
+  .profile-name{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .profile-role{font-size:12px;color:var(--text-muted);}
+  .nav-list{display:flex;flex-direction:column;gap:4px;flex:1;}
+  .nav-item{
+    display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-s);
+    color:var(--text-muted);background:none;border:none;text-align:left;font-size:14px;font-weight:600;
+    width:100%;
+  }
+  .nav-item svg{flex:none;}
+  .nav-item:hover{background:var(--surface-hover);color:var(--text);}
+  .nav-item.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow-s);border:1px solid var(--border);}
+  .nav-item.active .nav-dot{background:var(--found);}
+  .nav-dot{width:6px;height:6px;border-radius:50%;background:transparent;margin-left:auto;flex:none;}
+  .sidebar-foot{border-top:1px solid var(--border);padding-top:14px;}
+
+  .main-col{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--border);
+    gap:16px;
+  }
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-faint);min-width:0;}
+  .breadcrumb b{color:var(--text);font-weight:700;}
+  .breadcrumb button{background:none;border:none;color:inherit;font:inherit;padding:0;}
+  .breadcrumb button:hover{color:var(--text);}
+  .topbar-right{display:flex;align-items:center;gap:14px;flex:none;position:relative;}
+  .icon-btn{
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);
+    display:flex;align-items:center;justify-content:center;color:var(--text-muted);position:relative;flex:none;
+  }
+  .icon-btn:hover{color:var(--text);}
+  .notif-dot{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--lost);border:1.5px solid var(--surface);}
+  .user-chip{display:flex;align-items:center;gap:9px;background:none;border:none;color:var(--text);padding:2px;}
+  .user-chip .avatar{width:32px;height:32px;font-size:12px;}
+  .user-chip-name{font-weight:600;font-size:13.5px;}
+
+  .notif-panel{
+    position:absolute;top:46px;right:0;width:290px;background:var(--surface);
+    border:1px solid var(--border);border-radius:var(--radius-m);box-shadow:var(--shadow-m);
+    padding:6px;z-index:20;
+  }
+  .notif-panel h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-faint);padding:10px 10px 6px;}
+  .notif-row{display:flex;gap:10px;padding:10px;border-radius:var(--radius-s);}
+  .notif-row:hover{background:var(--surface-hover);}
+  .notif-row .dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:none;background:var(--found);}
+  .notif-row p{font-size:13px;}
+  .notif-row span{font-size:11.5px;color:var(--text-faint);}
+
+  .content{padding:24px 28px 64px;flex:1;}
+  .page{display:none;flex-direction:column;gap:22px;}
+  .page.active{display:flex;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .page-head h2{font-size:20px;font-weight:700;}
+  .page-sub{color:var(--text-muted);font-size:13.5px;margin-top:4px;}
+
+  /* ============================= SEARCH / TABS ============================= */
+  .search-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .search-box{
+    flex:1;min-width:220px;display:flex;align-items:center;gap:10px;
+    background:var(--surface);border:1px solid var(--border);border-radius:999px;
+    padding:11px 16px;color:var(--text-faint);
+  }
+  .search-box svg{flex:none;}
+  .search-box input{border:none;background:none;flex:1;color:var(--text);}
+  .search-box input:focus{outline:none;}
+  .tabs{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:4px;gap:2px;}
+  .tab{padding:8px 18px;border-radius:999px;border:none;background:none;color:var(--text-muted);font-weight:600;font-size:13.5px;}
+  .tab.active{background:var(--text);color:var(--bg);}
+
+  /* ============================= PILLS ============================= */
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;
+    font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
+  }
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .pill--lost{background:var(--lost-soft);color:var(--lost-strong);}
+  .pill--found{background:var(--found-soft);color:var(--found-strong);}
+
+  /* ============================= CARD GRID (dashboard / library) ============================= */
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;}
+  .obj-card{
+    background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--border-strong);
+    border-radius:var(--radius-m);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-s);
+  }
+  .obj-card--lost{border-left-color:var(--lost);}
+  .obj-card--found{border-left-color:var(--found);}
+  .obj-card__head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .obj-card__name{font-size:15.5px;font-weight:700;}
+  .obj-card__media{
+    height:120px;border-radius:var(--radius-s);background:var(--surface-hover);border:1px dashed var(--border-strong);
+    display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:12.5px;overflow:hidden;
+  }
+  .obj-card__desc{font-size:13px;color:var(--text-muted);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .obj-card__meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--text-faint);flex-wrap:wrap;}
+  .obj-card__meta span{display:flex;align-items:center;gap:5px;}
+  .obj-card__reco{font-size:11.5px;color:var(--found-strong);background:var(--found-soft);border-radius:var(--radius-s);padding:6px 10px;}
+
+  /* ============================= LIST ROWS (platform / request) ============================= */
+  .obj-list{display:flex;flex-direction:column;gap:12px;}
+  .obj-row{
+    display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);
+    border-left:4px solid var(--border-strong);border-radius:var(--radius-m);padding:12px 16px;box-shadow:var(--shadow-s);
+  }
+  .obj-row--lost{border-left-color:var(--lost);}
+  .obj-row--found{border-left-color:var(--found);}
+  .obj-row__media{
+    width:76px;height:76px;border-radius:var(--radius-s);background:var(--surface-hover);border:1px dashed var(--border-strong);
+    flex:none;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:10.5px;text-align:center;
+  }
+  .obj-row__body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  .obj-row__body h3{font-size:15px;font-weight:700;}
+  .obj-row__body p{font-size:13px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .obj-row__meta{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .obj-row__meta .meta-line{font-size:12px;color:var(--text-faint);display:flex;align-items:center;gap:5px;}
+  .obj-row__contact{flex:none;}
+
+  .empty-state{
+    padding:48px 20px;text-align:center;color:var(--text-faint);border:1px dashed var(--border-strong);
+    border-radius:var(--radius-m);display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .empty-state strong{color:var(--text-muted);font-size:14px;}
+
+  /* ============================= SETTINGS ============================= */
+  .settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);padding:20px;display:flex;flex-direction:column;gap:14px;max-width:520px;}
+  .settings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .k{font-size:13px;color:var(--text-muted);}
+  .settings-row .v{font-weight:600;font-size:13.5px;}
+  .settings-note{font-size:12.5px;color:var(--text-faint);}
+  details.dev-notes{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);padding:16px 18px;max-width:640px;}
+  details.dev-notes summary{cursor:pointer;font-weight:700;font-size:13.5px;}
+  details.dev-notes[open] summary{margin-bottom:12px;}
+  .dev-notes pre{
+    background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-s);padding:12px 14px;
+    font-size:12px;overflow-x:auto;color:var(--text-muted);
+  }
+  .dev-notes table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px;}
+  .dev-notes th,.dev-notes td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);}
+  .dev-notes th{color:var(--text-faint);font-weight:600;}
+  .dev-notes h5{font-size:12.5px;margin:14px 0 4px;color:var(--text-muted);}
+
+  /* ============================= MODAL ============================= */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(20,17,12,.45);display:flex;align-items:center;justify-content:center;
+    padding:20px;z-index:50;
+  }
+  .modal{
+    width:100%;max-width:480px;max-height:90svh;overflow-y:auto;background:var(--surface);border-radius:var(--radius-l);
+    padding:26px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-m);
+  }
+  .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .modal-head h2{font-size:18px;}
+  .modal-head p{color:var(--text-muted);font-size:13px;margin-top:4px;}
+  .modal-close{background:none;border:none;color:var(--text-faint);width:30px;height:30px;flex:none;}
+  .status-toggle{display:flex;gap:10px;}
+  .status-opt{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:var(--radius-s);
+    border:1.5px solid var(--border-strong);background:var(--surface);font-weight:700;font-size:13.5px;color:var(--text-muted);
+  }
+  .status-opt[data-checked="true"].opt-lost{border-color:var(--lost);color:var(--lost-strong);background:var(--lost-soft);}
+  .status-opt[data-checked="true"].opt-found{border-color:var(--found);color:var(--found-strong);background:var(--found-soft);}
+  .modal-actions{display:flex;gap:10px;margin-top:4px;}
+  .modal-actions .btn{flex:1;}
+
+  /* ============================= TOAST ============================= */
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(0);
+    background:var(--text);color:var(--bg);padding:12px 20px;border-radius:999px;font-size:13.5px;font-weight:600;
+    box-shadow:var(--shadow-m);z-index:80;display:flex;align-items:center;gap:8px;transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.hide{opacity:0;transform:translateX(-50%) translateY(8px);pointer-events:none;}
+
+  [hidden]{display:none!important;}
+
+  /* ============================= RESPONSIVE ============================= */
+  @media (max-width:860px){
+    .app-shell{flex-direction:column;}
+    .sidebar{
+      width:100%;flex-direction:row;align-items:center;gap:14px;padding:12px 16px;
+      overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);
+    }
+    .brand{display:none;}
+    .profile{padding:0;flex:none;}
+    .profile-text{display:none;}
+    .nav-list{flex-direction:row;flex:none;gap:6px;}
+    .nav-item{flex-direction:column;gap:4px;font-size:11px;padding:8px 10px;white-space:nowrap;}
+    .nav-dot{display:none;}
+    .sidebar-foot{border-top:none;border-left:1px solid var(--border);padding-top:0;padding-left:10px;}
+    .topbar{padding:14px 16px;}
+    .content{padding:18px 16px 48px;}
+    .obj-row{flex-wrap:wrap;}
+    .obj-row__meta{flex-direction:row;align-items:center;}
+  }
+  @media (max-width:480px){
+    .field-row{flex-direction:column;}
+    .search-row{flex-direction:column;align-items:stretch;}
+    .tabs{align-self:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ AUTH SCREEN ============================================================ -->
+<section id="screen-auth" class="screen">
+  <div class="auth-card">
+    <div class="auth-mark">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+        <circle cx="10.3" cy="10.3" r="6.3" style="stroke:var(--lost)" stroke-width="2"/>
+        <line x1="15" y1="15" x2="20.3" y2="20.3" style="stroke:var(--found)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="auth-heading">
+      <h1 id="auth-title">Welcome back</h1>
+      <p id="auth-subtitle">Log in to check your matches and posts.</p>
+    </div>
+
+    <form class="auth-form" id="form-auth" novalidate>
+      <div class="field" id="field-signup-email" hidden>
+        <label for="auth-email">Email</label>
+        <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="auth-username">Username</label>
+        <input id="auth-username" type="text" autocomplete="username" placeholder="e.g. morgan.b" required>
+      </div>
+      <div class="field">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+      </div>
+      <div class="auth-error" id="auth-error"></div>
+      <button type="submit" class="btn btn-primary btn-block auth-submit" id="auth-submit">Log in</button>
+    </form>
+
+    <p class="auth-switch">
+      <span id="auth-switch-text">No account?</span>
+      <button type="button" id="auth-switch-btn">Sign up</button>
+    </p>
+    <p class="auth-tip">Prototype tip — any username &amp; password will do.</p>
+  </div>
+</section>
+
+<!-- ============================================================ APP SHELL ============================================================ -->
+<div id="screen-app" class="app-shell" hidden>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="10.3" cy="10.3" r="6.3" style="stroke:var(--lost)" stroke-width="2.2"/>
+          <line x1="15" y1="15" x2="20.3" y2="20.3" style="stroke:var(--found)" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Lost &amp; Found
+    </div>
+
+    <button class="profile" id="btn-profile-shortcut" type="button" title="Go to settings">
+      <span class="avatar" id="sidebar-avatar">M</span>
+      <span class="profile-text">
+        <span class="profile-name" id="sidebar-username">morgan.b</span>
+        <span class="profile-role">Member</span>
+      </span>
+    </button>
+
+    <nav class="nav-list">
+      <button class="nav-item" data-route="dashboard" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg>
+        Dashboard<span class="nav-dot"></span>
+      </button>
+      <button class="nav-item" data-route="platform" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.2 2.2L15.8 9.6"/></svg>
+        Platform<span class="nav-dot"></span>
+      </button>
+      <button class="nav-item" data-route="request" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3.2 1.9"/></svg>
+        Request<span class="nav-dot"></span>
+      </button>
+      <button class="nav-item" data-route="library" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+        Library<span class="nav-dot"></span>
+      </button>
+      <button class="nav-item" data-route="settings" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .35 1.9l.06.06a2 2 0 1 1-2.9 2.9l-.06-.06a1.7 1.7 0 0 0-1.9-.35 1.7 1.7 0 0 0-1 1.55V19.7a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.55 1.7 1.7 0 0 0-1.9.35l-.06.06a2 2 0 1 1-2.9-2.9l.06-.06a1.7 1.7 0 0 0 .35-1.9 1.7 1.7 0 0 0-1.55-1H4.3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.55-1.1 1.7 1.7 0 0 0-.35-1.9l-.06-.06a2 2 0 1 1 2.9-2.9l.06.06a1.7 1.7 0 0 0 1.9.35H10.5a1.7 1.7 0 0 0 1-1.55V4.3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.9-.35l.06-.06a2 2 0 1 1 2.9 2.9l-.06.06a1.7 1.7 0 0 0-.35 1.9V10.5a1.7 1.7 0 0 0 1.55 1H19.7a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.55 1z"/></svg>
+        Settings<span class="nav-dot"></span>
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <button class="nav-item" id="btn-signout" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="btn-bell" type="button" aria-label="Notifications">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div id="notif-panel" class="notif-panel" hidden></div>
+        <button class="user-chip" id="btn-user-chip" type="button">
+          <span class="avatar" id="chip-avatar">M</span>
+          <span class="user-chip-name" id="chip-username">morgan.b</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <section class="page" data-page="dashboard">
+        <div class="page-head">
+          <div>
+            <h2>Recommended for you</h2>
+            <p class="page-sub">Matched against your own posts and requests, freshest first.</p>
+          </div>
+          <button class="btn btn-primary" id="btn-new-from-dash" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            New post / request
+          </button>
+        </div>
+        <div class="card-grid" id="grid-dashboard"></div>
+      </section>
+
+      <!-- PLATFORM (found items from everyone) -->
+      <section class="page" data-page="platform">
+        <div class="page-head">
+          <div>
+            <h2>Platform</h2>
+            <p class="page-sub">Items other people have found and posted.</p>
+          </div>
+        </div>
+        <div class="search-row">
+          <label class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" id="search-platform" placeholder="Search anything at all">
+          </label>
+        </div>
+        <div class="obj-list" id="list-platform"></div>
+      </section>
+
+      <!-- REQUEST (lost items from everyone) -->
+      <section class="page" data-page="request">
+        <div class="page-head">
+          <div>
+            <h2>Request</h2>
+            <p class="page-sub">Items other people have lost and are asking about.</p>
+          </div>
+        </div>
+        <div class="search-row">
+          <label class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" id="search-request" placeholder="Search anything at all">
+          </label>
+        </div>
+        <div class="obj-list" id="list-request"></div>
+      </section>
+
+      <!-- LIBRARY (my own posts / requests) -->
+      <section class="page" data-page="library">
+        <div class="page-head">
+          <div>
+            <h2>Library</h2>
+            <p class="page-sub">Everything you've posted or requested.</p>
+          </div>
+        </div>
+        <div class="search-row">
+          <label class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" id="search-library" placeholder="Search anything at all">
+          </label>
+          <button class="btn btn-primary" id="btn-new-from-library" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            Post / Request
+          </button>
+        </div>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-libtab="found" type="button">Post</button>
+          <button class="tab" data-libtab="lost" type="button">Request</button>
+        </div>
+        <div class="card-grid" id="grid-library"></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" data-page="settings">
+        <div class="page-head">
+          <div>
+            <h2>Settings</h2>
+            <p class="page-sub">Not much to configure yet — this is a placeholder for now.</p>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-row"><span class="k">Username</span><span class="v" id="settings-username">—</span></div>
+          <div class="settings-row"><span class="k">Email</span><span class="v" id="settings-email">—</span></div>
+          <div class="settings-row"><span class="k">Password</span><span class="v">••••••••</span></div>
+        </div>
+        <p class="settings-note">More account, notification and privacy controls will land here later.</p>
+
+        <details class="dev-notes">
+          <summary>For developers — data &amp; integration notes</summary>
+          <p style="font-size:13px;color:var(--text-muted);">This screen now talks to the real <code class="mono">lost-service</code> and <code class="mono">found-service</code> Spring Boot APIs via <code class="mono">DataStore</code> — nothing else in the page knows the backend exists. Login is still a local placeholder (no user-service yet), so items are tagged with whatever username you typed in.</p>
+          <h5>Lost/Found item response shape (both services)</h5>
+          <pre class="mono">{
+  id: number,
+  name: string,
+  category: string | null,
+  description: string,
+  location: string,       // regional vicinity, free text
+  eventDate: string,      // e.g. "14 Sep 2026" — stored as text, not a Date
+  contactEmail: string,
+  ownerUsername: string,
+  resolved: boolean,
+  createdAt: string       // ISO instant
+}</pre>
+          <h5>Endpoints in use</h5>
+          <table>
+            <tr><th>Method &amp; path</th><th>Used by</th></tr>
+            <tr><td class="mono">GET http://localhost:8082/api/found-items</td><td>Platform page</td></tr>
+            <tr><td class="mono">GET http://localhost:8081/api/lost-items</td><td>Request page</td></tr>
+            <tr><td class="mono">GET …?owner=&lt;username&gt;</td><td>Library page (mine)</td></tr>
+            <tr><td class="mono">GET …?q=&lt;text&gt;</td><td>Search boxes (client-side filter today)</td></tr>
+            <tr><td class="mono">POST …/found-items or /lost-items</td><td>New post / request modal</td></tr>
+            <tr><td class="mono">PUT / DELETE …/{id}</td><td>Not wired into this UI yet, but live on the API</td></tr>
+          </table>
+          <p style="font-size:12px;color:var(--text-faint);margin-top:10px;">Recommendations on the Dashboard are computed client-side for now (word-overlap match against your own posts/requests) — see <code class="mono">DataStore.getRecommendations</code>. A Gemini-backed endpoint can replace just that one method later.</p>
+        </details>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================ CREATE MODAL ============================================================ -->
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <form class="modal" id="form-post" novalidate>
+    <div class="modal-head">
+      <div>
+        <h2 id="modal-title">New post</h2>
+        <p id="modal-subtitle">Notify others you've found an item.</p>
+      </div>
+      <button type="button" class="modal-close" id="btn-modal-close" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="field">
+      <label>This item was…</label>
+      <div class="status-toggle">
+        <button type="button" class="status-opt opt-found" data-status="found" data-checked="true">Found</button>
+        <button type="button" class="status-opt opt-lost" data-status="lost" data-checked="false">Lost</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="pf-name">Item name</label>
+      <input id="pf-name" type="text" placeholder="e.g. Grey tabby cat" required>
+    </div>
+
+    <div class="field">
+      <label for="pf-desc">Description</label>
+      <textarea id="pf-desc" rows="3" placeholder="Distinguishing details, where exactly, anything that helps" required></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="pf-date" id="pf-date-label">Date found</label>
+        <input id="pf-date" type="date" required>
+      </div>
+      <div class="field">
+        <label for="pf-address">Regional vicinity</label>
+        <input id="pf-address" type="text" list="address-suggestions" placeholder="e.g. Oak Park" required>
+        <datalist id="address-suggestions">
+          <option value="Elm Street Market"></option>
+          <option value="Harbor View Parking Garage"></option>
+          <option value="Oak Park"></option>
+          <option value="Riverside Diner"></option>
+          <option value="Maple Heights Library"></option>
+          <option value="Downtown Transit Hub"></option>
+        </datalist>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="pf-email">Contact email</label>
+      <input id="pf-email" type="email" required>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="btn-modal-submit">Publish to Platform</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast hide" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     CONFIG
+     Base URLs for the two Spring Boot services. Change these if
+     you run them on different ports, or point them at a deployed
+     host later.
+     ============================================================ */
+  const API = {
+    lost: "http://localhost:8081/api",   // lost-service  -> Request feed
+    found: "http://localhost:8082/api",  // found-service -> Platform feed
+    user: "http://localhost:8083/api"    // user-service  -> register/login
+  };
+
+  /* ============================================================
+     AUTH
+     Backed by user-service now (register/login are real API calls).
+     Items are still tagged with the signed-in username
+     (ownerUsername on the found/lost APIs) — user-service itself
+     has no relationship to those entities; a user's own posts and
+     requests are just looked up by that username on demand.
+     ============================================================ */
+  const CURRENT_USER = { email: "", username: "" };
+
+  /* ============================================================
+     DATA LAYER
+     Talks to the real backend over fetch(). Every other function
+     in this file only calls DataStore — never fetch() directly —
+     so this is the one place that knows about the two services.
+     ============================================================ */
+  function apiBase(status){ return status === "lost" ? API.lost : API.found; }
+  function apiPath(status){ return status === "lost" ? "/lost-items" : "/found-items"; }
+
+  // Backend <-> frontend field names don't match 1:1 (desc/description,
+  // address/location, date/eventDate, email/contactEmail, ownerId/ownerUsername).
+  // These two functions are the only place that mapping happens.
+  function fromApi(item, status){
+    return {
+      id: String(item.id),
+      name: item.name,
+      desc: item.description,
+      status: status,
+      email: item.contactEmail,
+      date: item.eventDate,
+      address: item.location,
+      category: item.category,
+      ownerId: item.ownerUsername,
+      resolved: !!item.resolved,
+      createdAt: item.createdAt
+    };
+  }
+  function toApiPayload(post){
+    return {
+      name: post.name,
+      category: post.category || null,
+      description: post.desc,
+      location: post.address,
+      eventDate: post.date,
+      contactEmail: post.email,
+      ownerUsername: post.ownerId
+    };
+  }
+
+  async function apiFetch(url, options){
+    let res;
+    try{
+      res = await fetch(url, options);
+    } catch(err){
+      throw new Error("Can't reach " + url + " — is that service running?");
+    }
+    if(!res.ok){
+      let message = res.status + " " + res.statusText;
+      try{ const body = await res.json(); if(body && body.message) message = body.message; } catch(_e){}
+      throw new Error(message);
+    }
+    if(res.status === 204) return null;
+    return res.json();
+  }
+
+  const DataStore = {
+    getUser(){ return CURRENT_USER; },
+    setUser(username, email){
+      CURRENT_USER.username = username;
+      if(email) CURRENT_USER.email = email;
+    },
+
+    async register({username, email, password}){
+      return apiFetch(API.user + "/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
+    },
+    async login({username, password}){
+      return apiFetch(API.user + "/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+    },
+
+    async getPosts({status, mine} = {}){
+      const url = new URL(apiBase(status) + apiPath(status));
+      if(mine) url.searchParams.set("owner", CURRENT_USER.username);
+      const items = await apiFetch(url.toString());
+      return items.map(item => fromApi(item, status)).sort((a,b)=> (b.createdAt||"").localeCompare(a.createdAt||""));
+    },
+
+    async createPost(post){
+      const url = apiBase(post.status) + apiPath(post.status);
+      const payload = toApiPayload(Object.assign({}, post, { ownerId: CURRENT_USER.username }));
+      const created = await apiFetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      return fromApi(created, post.status);
+    },
+
+    // Client-side matching for now: pull both feeds and score overlap
+    // against the signed-in user's own posts/requests, same heuristic
+    // as the original prototype. A real version can later call a
+    // Gemini-backed /api/.../recommendations endpoint instead —
+    // this function is the only thing that would need to change.
+    async getRecommendations(limit){
+      const [found, lost] = await Promise.all([
+        this.getPosts({status:"found"}),
+        this.getPosts({status:"lost"})
+      ]);
+      const all = found.concat(lost);
+      const mine = all.filter(p=>p.ownerId===CURRENT_USER.username);
+      const others = all.filter(p=>p.ownerId!==CURRENT_USER.username);
+      const stop = new Set(["with","near","that","this","have","been","from","into","found","lost","the","and","for"]);
+      const words = s => ((s||"").toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!stop.has(w));
+
+      const scored = [];
+      others.forEach(o=>{
+        let best = 0, matchedAgainst = null;
+        mine.forEach(m=>{
+          if(m.status===o.status) return; // only opposite-type matches make sense
+          const mw = new Set(words(m.name+" "+m.desc+" "+m.address));
+          const ow = words(o.name+" "+o.desc+" "+o.address);
+          let score = ow.filter(w=>mw.has(w)).length;
+          if(m.address===o.address) score += 1;
+          if(score>best){ best = score; matchedAgainst = m; }
+        });
+        scored.push({ post:o, score:best, matchedAgainst });
+      });
+      scored.sort((a,b)=> b.score-a.score);
+      const withMatches = scored.filter(s=>s.score>0);
+      const rest = scored.filter(s=>s.score===0);
+      return withMatches.concat(rest).slice(0, limit||4);
+    }
+  };
+
+  /* ============================================================ STATE ============================================================ */
+  const state = { route:"dashboard", libTab:"found" };
+
+  /* ============================================================ HELPERS ============================================================ */
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
+  function escapeHtml(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function initials(name){
+    return (name||"").split(/[.\s_]+/).filter(Boolean).slice(0,2).map(p=>p[0].toUpperCase()).join("");
+  }
+  const iconPin = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><path d="M12 21s7-6.4 7-11.5A7 7 0 0 0 5 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg>';
+  const iconCal = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  const iconMail = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+
+  function toast(msg){
+    const el = $("#toast");
+    el.textContent = msg;
+    el.classList.remove("hide");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> el.classList.add("hide"), 2600);
+  }
+
+  function loadingState(msg){
+    return '<div class="empty-state"><strong>'+escapeHtml(msg||"Loading…")+'</strong></div>';
+  }
+  function errorState(err){
+    return '<div class="empty-state"><strong>Couldn\'t load this</strong><span>'+escapeHtml(err.message)+'</span></div>';
+  }
+
+  /* ============================================================ AUTH ============================================================ */
+  let authMode = "login";
+  function setAuthMode(mode){
+    authMode = mode;
+    const isSignup = mode==="signup";
+    $("#field-signup-email").hidden = !isSignup;
+    $("#auth-email").required = isSignup;
+    $("#auth-title").textContent = isSignup ? "Create your account" : "Welcome back";
+    $("#auth-subtitle").textContent = isSignup ? "Join to post and request lost items." : "Log in to check your matches and posts.";
+    $("#auth-submit").textContent = isSignup ? "Sign up" : "Log in";
+    $("#auth-switch-text").textContent = isSignup ? "Already have an account?" : "No account?";
+    $("#auth-switch-btn").textContent = isSignup ? "Log in" : "Sign up";
+    $("#auth-error").textContent = "";
+  }
+  $("#auth-switch-btn").addEventListener("click", ()=> setAuthMode(authMode==="login" ? "signup" : "login"));
+
+  $("#form-auth").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const username = $("#auth-username").value.trim();
+    const password = $("#auth-password").value;
+    const email = $("#auth-email").value.trim();
+    if(!username || !password || (authMode==="signup" && !email)){
+      $("#auth-error").textContent = "Please fill in every field.";
+      return;
+    }
+    const submitBtn = $("#auth-submit");
+    submitBtn.disabled = true;
+    $("#auth-error").textContent = "";
+    try{
+      const user = authMode === "signup"
+        ? await DataStore.register({ username, email, password })
+        : await DataStore.login({ username, password });
+      DataStore.setUser(user.username, user.email);
+      enterApp();
+    } catch(err){
+      $("#auth-error").textContent = err.message;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  function enterApp(){
+    $("#screen-auth").hidden = true;
+    $("#screen-app").hidden = false;
+    const ini = initials(CURRENT_USER.username) || "U";
+    $("#sidebar-username").textContent = CURRENT_USER.username;
+    $("#chip-username").textContent = CURRENT_USER.username;
+    $("#sidebar-avatar").textContent = ini;
+    $("#chip-avatar").textContent = ini;
+    $("#settings-username").textContent = CURRENT_USER.username;
+    $("#settings-email").textContent = CURRENT_USER.email;
+    navigate("dashboard");
+  }
+
+  $("#btn-signout").addEventListener("click", function(){
+    $("#screen-app").hidden = true;
+    $("#screen-auth").hidden = false;
+    $("#form-auth").reset();
+    setAuthMode("login");
+  });
+
+  /* ============================================================ NAVIGATION ============================================================ */
+  const ROUTE_LABEL = { dashboard:"Homepage", platform:"Platform", request:"Request", library:"Library", settings:"Settings" };
+
+  function navigate(route){
+    state.route = route;
+    $all(".page").forEach(p=> p.classList.toggle("active", p.dataset.page===route));
+    $all(".nav-item[data-route]").forEach(n=> n.classList.toggle("active", n.dataset.route===route));
+    renderBreadcrumb();
+    if(route==="dashboard") renderDashboard();
+    if(route==="platform") renderPlatform();
+    if(route==="request") renderRequest();
+    if(route==="library") renderLibrary();
+    closeNotifPanel();
+  }
+  function renderBreadcrumb(){
+    const bc = $("#breadcrumb");
+    if(state.route==="dashboard"){
+      bc.innerHTML = '<b>Homepage</b>';
+    } else {
+      bc.innerHTML = '<button type="button" id="bc-home">Homepage</button><span>›</span><b>'+ROUTE_LABEL[state.route]+'</b>';
+      $("#bc-home").addEventListener("click", ()=> navigate("dashboard"));
+    }
+  }
+  $all(".nav-item[data-route]").forEach(btn=> btn.addEventListener("click", ()=> navigate(btn.dataset.route)));
+  $("#btn-profile-shortcut").addEventListener("click", ()=> navigate("settings"));
+  $("#btn-user-chip").addEventListener("click", ()=> navigate("settings"));
+
+  /* ============================================================ NOTIFICATIONS ============================================================ */
+  function closeNotifPanel(){ $("#notif-panel").hidden = true; }
+  $("#btn-bell").addEventListener("click", function(e){
+    e.stopPropagation();
+    const panel = $("#notif-panel");
+    if(!panel.hidden){ panel.hidden = true; return; }
+    panel.innerHTML = '<h4>Notifications</h4><div class="notif-row"><span class="dot"></span><div><p>Notifications aren\'t wired to the backend yet.</p><span>—</span></div></div>';
+    panel.hidden = false;
+  });
+  document.addEventListener("click", closeNotifPanel);
+
+  /* ============================================================ RENDER: CARD / ROW ============================================================ */
+  function cardHtml(p, recoNote){
+    return '<article class="obj-card obj-card--'+p.status+'">'+
+      '<div class="obj-card__head"><h3 class="obj-card__name">'+escapeHtml(p.name)+'</h3>'+
+      '<span class="pill pill--'+p.status+'">'+(p.status==="lost"?"Lost":"Found")+'</span></div>'+
+      '<div class="obj-card__media">image placeholder</div>'+
+      '<p class="obj-card__desc">'+escapeHtml(p.desc)+'</p>'+
+      '<div class="obj-card__meta"><span>'+iconPin+escapeHtml(p.address)+'</span><span>'+iconCal+escapeHtml(p.date)+'</span></div>'+
+      (recoNote ? '<div class="obj-card__reco">'+recoNote+'</div>' : '')+
+      '</article>';
+  }
+  function rowHtml(p){
+    return '<article class="obj-row obj-row--'+p.status+'">'+
+      '<div class="obj-row__media">image<br>placeholder</div>'+
+      '<div class="obj-row__body"><h3>'+escapeHtml(p.name)+'</h3><p>'+escapeHtml(p.desc)+'</p></div>'+
+      '<div class="obj-row__meta"><span class="pill pill--'+p.status+'">'+(p.status==="lost"?"Lost":"Found")+'</span>'+
+      '<span class="meta-line">'+iconCal+escapeHtml(p.date)+'</span>'+
+      '<span class="meta-line">'+iconPin+escapeHtml(p.address)+'</span></div>'+
+      '</article>';
+  }
+  function emptyState(msg){
+    return '<div class="empty-state"><strong>Nothing here yet</strong><span>'+escapeHtml(msg)+'</span></div>';
+  }
+
+  /* ============================================================ RENDER: PAGES (all async — they fetch, then paint) ============================================================ */
+  async function renderDashboard(){
+    const grid = $("#grid-dashboard");
+    grid.innerHTML = loadingState();
+    try{
+      const recs = await DataStore.getRecommendations(4);
+      if(!recs.length){ grid.innerHTML = emptyState("Post or request something to start seeing matches."); return; }
+      grid.innerHTML = recs.map(r=>{
+        const note = r.score>0 ? 'Matches your '+(r.matchedAgainst.status==="lost"?"request":"post")+': “'+escapeHtml(r.matchedAgainst.name)+'”' : "Recent on the platform";
+        return cardHtml(r.post, note);
+      }).join("");
+    } catch(err){ grid.innerHTML = errorState(err); }
+  }
+
+  async function renderPlatform(){
+    const list = $("#list-platform");
+    list.innerHTML = loadingState();
+    try{
+      const q = $("#search-platform").value.trim().toLowerCase();
+      let items = await DataStore.getPosts({status:"found"});
+      if(q) items = items.filter(matchesQuery(q));
+      list.innerHTML = items.length ? items.map(rowHtml).join("") : emptyState("No found-item posts match your search.");
+    } catch(err){ list.innerHTML = errorState(err); }
+  }
+  async function renderRequest(){
+    const list = $("#list-request");
+    list.innerHTML = loadingState();
+    try{
+      const q = $("#search-request").value.trim().toLowerCase();
+      let items = await DataStore.getPosts({status:"lost"});
+      if(q) items = items.filter(matchesQuery(q));
+      list.innerHTML = items.length ? items.map(rowHtml).join("") : emptyState("No lost-item requests match your search.");
+    } catch(err){ list.innerHTML = errorState(err); }
+  }
+  async function renderLibrary(){
+    const grid = $("#grid-library");
+    grid.innerHTML = loadingState();
+    try{
+      const q = $("#search-library").value.trim().toLowerCase();
+      let items = await DataStore.getPosts({status:state.libTab, mine:true});
+      if(q) items = items.filter(matchesQuery(q));
+      grid.innerHTML = items.length ? items.map(p=>cardHtml(p)).join("") :
+        emptyState(state.libTab==="found" ? "You haven't posted any found items yet." : "You haven't requested any lost items yet.");
+    } catch(err){ grid.innerHTML = errorState(err); }
+  }
+  function matchesQuery(q){
+    return p => (p.name+" "+p.desc+" "+p.address).toLowerCase().includes(q);
+  }
+
+  let searchDebounce;
+  function debouncedRender(fn){
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(fn, 200);
+  }
+  $("#search-platform").addEventListener("input", ()=> debouncedRender(renderPlatform));
+  $("#search-request").addEventListener("input", ()=> debouncedRender(renderRequest));
+  $("#search-library").addEventListener("input", ()=> debouncedRender(renderLibrary));
+  $all(".tab[data-libtab]").forEach(tab=>{
+    tab.addEventListener("click", function(){
+      $all(".tab[data-libtab]").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      state.libTab = tab.dataset.libtab;
+      renderLibrary();
+    });
+  });
+
+  /* ============================================================ CREATE MODAL ============================================================ */
+  let modalStatus = "found";
+  function openModal(defaultStatus){
+    modalStatus = defaultStatus || "found";
+    setModalStatus(modalStatus);
+    $("#pf-name").value = "";
+    $("#pf-desc").value = "";
+    $("#pf-date").value = "";
+    $("#pf-address").value = "";
+    $("#pf-email").value = CURRENT_USER.email;
+    $("#modal-overlay").hidden = false;
+    $("#pf-name").focus();
+  }
+  function closeModal(){ $("#modal-overlay").hidden = true; }
+  function setModalStatus(status){
+    modalStatus = status;
+    $all(".status-opt").forEach(o=> o.dataset.checked = (o.dataset.status===status) ? "true" : "false");
+    const isLost = status==="lost";
+    $("#modal-title").textContent = isLost ? "New request" : "New post";
+    $("#modal-subtitle").textContent = isLost ? "Notify others you've lost an item." : "Notify others you've found an item.";
+    $("#pf-date-label").textContent = isLost ? "Date lost" : "Date found";
+    $("#btn-modal-submit").textContent = isLost ? "Publish to Request" : "Publish to Platform";
+  }
+  $all(".status-opt").forEach(opt=> opt.addEventListener("click", ()=> setModalStatus(opt.dataset.status)));
+  $("#btn-new-from-dash").addEventListener("click", ()=> openModal("found"));
+  $("#btn-new-from-library").addEventListener("click", ()=> openModal(state.libTab));
+  $("#btn-modal-close").addEventListener("click", closeModal);
+  $("#btn-modal-cancel").addEventListener("click", closeModal);
+  $("#modal-overlay").addEventListener("click", function(e){ if(e.target===this) closeModal(); });
+
+  $("#form-post").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const name = $("#pf-name").value.trim();
+    const desc = $("#pf-desc").value.trim();
+    const rawDate = $("#pf-date").value;
+    const address = $("#pf-address").value.trim();
+    const email = $("#pf-email").value.trim();
+    if(!name || !desc || !rawDate || !address || !email) return;
+    const dateStr = new Date(rawDate+"T00:00:00").toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" });
+
+    const submitBtn = $("#btn-modal-submit");
+    submitBtn.disabled = true;
+    try{
+      await DataStore.createPost({ name, desc, status:modalStatus, email, date:dateStr, address });
+      closeModal();
+      toast(modalStatus==="lost" ? "Your request was published." : "Your post was published.");
+      renderDashboard();
+      if(state.route==="platform") renderPlatform();
+      if(state.route==="request") renderRequest();
+      if(state.route==="library"){ state.libTab = modalStatus; $all(".tab[data-libtab]").forEach(t=>t.classList.toggle("active", t.dataset.libtab===modalStatus)); renderLibrary(); }
+    } catch(err){
+      toast("Couldn't publish: " + err.message);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  /* ============================================================ HOT RELOAD (artifact viewers) ============================================================ */
+  function boot(){
+    setAuthMode("login");
+  }
+  if(window.claude && window.claude.hot){
+    window.claude.hot.ready ? window.claude.hot.ready(boot) : boot();
+  } else {
+    boot();
+  }
+})();
+</script>
+
+</body>
+</html>

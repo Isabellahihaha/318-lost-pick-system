@@ -18,6 +18,7 @@
     <modules>
         <module>lost-service</module>
         <module>found-service</module>
+        <module>user-service</module>
     </modules>
 
     <properties>

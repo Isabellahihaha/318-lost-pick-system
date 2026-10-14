@@ -42,6 +42,12 @@
     	    <groupId>org.hibernate.orm</groupId>
     	    <artifactId>hibernate-community-dialects</artifactId>
 	</dependency>
+
+        <!-- LangChain4j Google Gemini Spring Boot Starter (AI Matching Engine) -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-google-ai-gemini-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

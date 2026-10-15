@@ -1,0 +1,11 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ai-matching-service
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY:mock-key}
+    url: https://api.openai.com/v1/chat/completions

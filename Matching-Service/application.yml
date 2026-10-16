@@ -7,5 +7,5 @@ spring:
 
 openai:
   api:
-    key: ${OPENAI_API_KEY:mock-key}
-    url: https://api.openai.com/v1/chat/completions
+  openai.api.key=YOUR_GEMINI_API_KEY
+  openai.api.url=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions

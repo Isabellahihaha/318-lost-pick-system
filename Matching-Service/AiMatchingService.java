@@ -24,10 +24,10 @@ public class AiMatchingService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${openai.api.key:mock-key}")
+    @Value("${openai.api.key=YOUR_GEMINI_API_KEY}")
     private String apiKey;
 
-    @Value("${openai.api.url:https://api.openai.com/v1/chat/completions}")
+    @Value("${openai.api.url=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions}")
     private String apiUrl;
 
     /**
@@ -169,30 +169,37 @@ public class AiMatchingService {
     }
 
     private String callLlmApi(String prompt) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
+    // Append API key as query param
+    String urlWithKey = apiUrl + "?key=" + apiKey;
 
-        Map<String, Object> body = Map.of(
-                "model", "gpt-4o-mini",
-                "messages", List.of(
-                        Map.of("role", "system", "content", "You are an AI assistant that extracts structured JSON data from text."),
-                        Map.of("role", "user", "content", prompt)
-                ),
-                "response_format", Map.of("type", "json_object")
-        );
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+    // Request payload matching Gemini API structure
+    Map<String, Object> body = Map.of(
+        "contents", List.of(
+            Map.of("parts", List.of(
+                Map.of("text", "You are an AI assistant that extracts structured JSON data from text.\n\n" + prompt)
+            ))
+        ),
+        "generationConfig", Map.of(
+            "responseMimeType", "application/json"
+        )
+    );
 
-        if (response.getBody() != null && response.getBody().containsKey("choices")) {
-            List choices = (List) response.getBody().get("choices");
-            Map firstChoice = (Map) choices.get(0);
-            Map message = (Map) firstChoice.get("message");
-            return (String) message.get("content");
-        }
-        throw new RuntimeException("Empty response from LLM Provider");
+    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+    ResponseEntity<Map> response = restTemplate.postForEntity(urlWithKey, entity, Map.class);
+
+    if (response.getBody() != null && response.getBody().containsKey("candidates")) {
+        List candidates = (List) response.getBody().get("candidates");
+        Map firstCandidate = (Map) candidates.get(0);
+        Map content = (Map) firstCandidate.get("content");
+        List parts = (List) content.get("parts");
+        Map firstPart = (Map) parts.get(0);
+        return (String) firstPart.get("text");
     }
+    throw new RuntimeException("Empty response from Gemini API");
+}
 
     private ExtractedItemAttributes mockExtraction(String text) {
         String lower = text.toLowerCase();

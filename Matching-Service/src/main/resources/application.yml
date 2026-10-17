@@ -27,7 +27,7 @@ spring:
 
 openai:
   api:
-    key: ${GEMINI_API_KEY:mock-key}
+    key: {GEMINI_API_KEY:mock-key}
     url: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent
 
 lost:

@@ -1,8 +1,5 @@
 package com.csci318.found.web;
 
-/**
- * Payload for PUT /api/found-items/{id}.
- */
 public class UpdateFoundItemRequest {
 
     private String name;

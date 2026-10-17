@@ -4,10 +4,6 @@ import com.csci318.user.domain.User;
 
 import java.time.Instant;
 
-/**
- * What the API returns for an account. Deliberately excludes the
- * password field — never echo it back to the frontend.
- */
 public class UserResponse {
 
     private final Long id;

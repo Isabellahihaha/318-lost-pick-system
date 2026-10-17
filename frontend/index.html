@@ -6,7 +6,7 @@
 <title>Lost &amp; Found</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-  /* ============================= TOKENS ============================= */
+
   :root{
     --bg:#FAF8F3;
     --surface:#FFFFFF;
@@ -74,7 +74,6 @@
     --shadow-m:0 14px 32px -14px rgba(0,0,0,.65);
   }
 
-  /* ============================= BASE ============================= */
   *{box-sizing:border-box;}
   body{
     background:var(--bg);
@@ -95,7 +94,6 @@
 
   .screen{width:100%;}
 
-  /* ============================= AUTH ============================= */
   #screen-auth{
     min-height:100svh;
     display:flex;align-items:center;justify-content:center;
@@ -130,7 +128,6 @@
   .auth-tip{font-size:12px;color:var(--text-faint);text-align:center;}
   .auth-error{font-size:12.5px;color:var(--danger);min-height:16px;text-align:center;}
 
-  /* ============================= BUTTONS ============================= */
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
     padding:11px 18px;border-radius:999px;border:1px solid transparent;
@@ -144,7 +141,6 @@
   .btn-danger-ghost{background:transparent;color:var(--danger);border-color:transparent;}
   .btn:disabled{opacity:.5;cursor:not-allowed;}
 
-  /* ============================= APP SHELL ============================= */
   .app-shell{display:flex;min-height:100svh;}
   .sidebar{
     width:230px;flex:none;background:var(--surface-sidebar);
@@ -221,7 +217,6 @@
   .page-head h2{font-size:20px;font-weight:700;}
   .page-sub{color:var(--text-muted);font-size:13.5px;margin-top:4px;}
 
-  /* ============================= SEARCH / TABS ============================= */
   .search-row{display:flex;gap:12px;flex-wrap:wrap;}
   .search-box{
     flex:1;min-width:220px;display:flex;align-items:center;gap:10px;
@@ -235,7 +230,6 @@
   .tab{padding:8px 18px;border-radius:999px;border:none;background:none;color:var(--text-muted);font-weight:600;font-size:13.5px;}
   .tab.active{background:var(--text);color:var(--bg);}
 
-  /* ============================= PILLS ============================= */
   .pill{
     display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;
     font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
@@ -244,12 +238,13 @@
   .pill--lost{background:var(--lost-soft);color:var(--lost-strong);}
   .pill--found{background:var(--found-soft);color:var(--found-strong);}
 
-  /* ============================= CARD GRID (dashboard / library) ============================= */
   .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;}
   .obj-card{
     background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--border-strong);
     border-radius:var(--radius-m);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-s);
+    cursor:pointer;transition:box-shadow .15s ease, transform .15s ease;
   }
+  .obj-card:hover,.obj-card:focus-visible{box-shadow:var(--shadow-m);transform:translateY(-1px);}
   .obj-card--lost{border-left-color:var(--lost);}
   .obj-card--found{border-left-color:var(--found);}
   .obj-card__head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
@@ -264,12 +259,22 @@
   .obj-card__meta span{display:flex;align-items:center;gap:5px;}
   .obj-card__reco{font-size:11.5px;color:var(--found-strong);background:var(--found-soft);border-radius:var(--radius-s);padding:6px 10px;}
 
-  /* ============================= LIST ROWS (platform / request) ============================= */
+  .obj-card__status{
+    display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+    padding-top:10px;border-top:1px solid var(--border);
+  }
+  .obj-card__actions{display:flex;gap:8px;}
+  .btn-sm{padding:7px 13px;font-size:12.5px;}
+  .btn-danger{background:transparent;border-color:var(--danger);color:var(--danger);}
+  .btn-danger:hover{background:var(--danger);color:#fff;}
+
   .obj-list{display:flex;flex-direction:column;gap:12px;}
   .obj-row{
     display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);
     border-left:4px solid var(--border-strong);border-radius:var(--radius-m);padding:12px 16px;box-shadow:var(--shadow-s);
+    cursor:pointer;transition:box-shadow .15s ease;
   }
+  .obj-row:hover,.obj-row:focus-visible{box-shadow:var(--shadow-m);}
   .obj-row--lost{border-left-color:var(--lost);}
   .obj-row--found{border-left-color:var(--found);}
   .obj-row__media{
@@ -289,7 +294,6 @@
   }
   .empty-state strong{color:var(--text-muted);font-size:14px;}
 
-  /* ============================= SETTINGS ============================= */
   .settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);padding:20px;display:flex;flex-direction:column;gap:14px;max-width:520px;}
   .settings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
   .settings-row:last-child{border-bottom:none;}
@@ -308,7 +312,6 @@
   .dev-notes th{color:var(--text-faint);font-weight:600;}
   .dev-notes h5{font-size:12.5px;margin:14px 0 4px;color:var(--text-muted);}
 
-  /* ============================= MODAL ============================= */
   .modal-overlay{
     position:fixed;inset:0;background:rgba(20,17,12,.45);display:flex;align-items:center;justify-content:center;
     padding:20px;z-index:50;
@@ -331,7 +334,16 @@
   .modal-actions{display:flex;gap:10px;margin-top:4px;}
   .modal-actions .btn{flex:1;}
 
-  /* ============================= TOAST ============================= */
+  .detail-attrs{display:flex;flex-direction:column;}
+  .detail-attr{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13.5px;}
+  .detail-attr:last-child{border-bottom:none;}
+  .detail-attr .k{color:var(--text-muted);}
+  .detail-attr .v{font-weight:600;text-align:right;}
+  .detail-contact{background:var(--found-soft);border-radius:var(--radius-s);padding:12px 14px;display:flex;flex-direction:column;gap:4px;}
+  .detail-contact .k{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--found-strong);}
+  .detail-contact a{font-size:14px;font-weight:600;color:var(--found-strong);word-break:break-all;}
+  .detail-contact-note{font-size:12.5px;color:var(--text-faint);}
+
   .toast{
     position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(0);
     background:var(--text);color:var(--bg);padding:12px 20px;border-radius:999px;font-size:13.5px;font-weight:600;
@@ -341,7 +353,6 @@
 
   [hidden]{display:none!important;}
 
-  /* ============================= RESPONSIVE ============================= */
   @media (max-width:860px){
     .app-shell{flex-direction:column;}
     .sidebar{
@@ -369,7 +380,6 @@
 </head>
 <body>
 
-<!-- ============================================================ AUTH SCREEN ============================================================ -->
 <section id="screen-auth" class="screen">
   <div class="auth-card">
     <div class="auth-mark">
@@ -408,7 +418,6 @@
   </div>
 </section>
 
-<!-- ============================================================ APP SHELL ============================================================ -->
 <div id="screen-app" class="app-shell" hidden>
 
   <aside class="sidebar">
@@ -479,7 +488,6 @@
 
     <main class="content">
 
-      <!-- DASHBOARD -->
       <section class="page" data-page="dashboard">
         <div class="page-head">
           <div>
@@ -494,7 +502,6 @@
         <div class="card-grid" id="grid-dashboard"></div>
       </section>
 
-      <!-- PLATFORM (found items from everyone) -->
       <section class="page" data-page="platform">
         <div class="page-head">
           <div>
@@ -511,7 +518,6 @@
         <div class="obj-list" id="list-platform"></div>
       </section>
 
-      <!-- REQUEST (lost items from everyone) -->
       <section class="page" data-page="request">
         <div class="page-head">
           <div>
@@ -528,7 +534,6 @@
         <div class="obj-list" id="list-request"></div>
       </section>
 
-      <!-- LIBRARY (my own posts / requests) -->
       <section class="page" data-page="library">
         <div class="page-head">
           <div>
@@ -553,7 +558,6 @@
         <div class="card-grid" id="grid-library"></div>
       </section>
 
-      <!-- SETTINGS -->
       <section class="page" data-page="settings">
         <div class="page-head">
           <div>
@@ -592,9 +596,10 @@
             <tr><td class="mono">GET …?owner=&lt;username&gt;</td><td>Library page (mine)</td></tr>
             <tr><td class="mono">GET …?q=&lt;text&gt;</td><td>Search boxes (client-side filter today)</td></tr>
             <tr><td class="mono">POST …/found-items or /lost-items</td><td>New post / request modal</td></tr>
-            <tr><td class="mono">PUT / DELETE …/{id}</td><td>Not wired into this UI yet, but live on the API</td></tr>
+            <tr><td class="mono">PUT …/{id}</td><td>Library status toggle (Unclaimed/Claimed, In search/Found) — sends the full record back with just `resolved` flipped</td></tr>
+            <tr><td class="mono">DELETE …/{id}</td><td>Library delete button (confirm before it fires)</td></tr>
           </table>
-          <p style="font-size:12px;color:var(--text-faint);margin-top:10px;">Recommendations on the Dashboard are computed client-side for now (word-overlap match against your own posts/requests) — see <code class="mono">DataStore.getRecommendations</code>. A Gemini-backed endpoint can replace just that one method later.</p>
+          <p style="font-size:12px;color:var(--text-faint);margin-top:10px;">Recommendations on the Dashboard now call the real Matching-Service composite score (text + spatial + temporal) via each item's <code class="mono">/matches</code> endpoint — see <code class="mono">DataStore.getRecommendations</code>. The text half is now judged by Gemini instead of keyword overlap, and Matching-Service returns a one-sentence <code class="mono">matchReasoning</code> alongside the score, shown directly on the card instead of a canned "Matches your post" label. <code class="mono">/matches</code> keeps both HIGH_CONFIDENCE (&ge;0.80) and SUGGESTED (&ge;0.50) results now, not just HIGH_CONFIDENCE — see lost/found-service's <code class="mono">*ItemMatchingService.isWorthShowing</code>. Padded with recent posts from others when there aren't enough real matches yet.</p>
         </details>
       </section>
 
@@ -602,7 +607,6 @@
   </div>
 </div>
 
-<!-- ============================================================ CREATE MODAL ============================================================ -->
 <div class="modal-overlay" id="modal-overlay" hidden>
   <form class="modal" id="form-post" novalidate>
     <div class="modal-head">
@@ -640,15 +644,16 @@
       </div>
       <div class="field">
         <label for="pf-address">Regional vicinity</label>
-        <input id="pf-address" type="text" list="address-suggestions" placeholder="e.g. Oak Park" required>
-        <datalist id="address-suggestions">
-          <option value="Elm Street Market"></option>
-          <option value="Harbor View Parking Garage"></option>
-          <option value="Oak Park"></option>
-          <option value="Riverside Diner"></option>
-          <option value="Maple Heights Library"></option>
-          <option value="Downtown Transit Hub"></option>
-        </datalist>
+
+        <select id="pf-address" required>
+          <option value="" disabled selected>Choose a location…</option>
+          <option value="Elm Street Market">Elm Street Market</option>
+          <option value="Harbor View Parking Garage">Harbor View Parking Garage</option>
+          <option value="Oak Park">Oak Park</option>
+          <option value="Riverside Diner">Riverside Diner</option>
+          <option value="Maple Heights Library">Maple Heights Library</option>
+          <option value="Downtown Transit Hub">Downtown Transit Hub</option>
+        </select>
       </div>
     </div>
 
@@ -664,46 +669,58 @@
   </form>
 </div>
 
+<div class="modal-overlay" id="detail-modal-overlay" hidden>
+  <div class="modal" id="detail-modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="detail-name"></h2>
+        <p id="detail-sub"></p>
+      </div>
+      <button type="button" class="modal-close" id="btn-detail-close" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="stroke:currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="obj-card__media" style="height:150px;">image placeholder</div>
+
+    <p id="detail-desc" style="font-size:13.5px;color:var(--text-muted);"></p>
+
+    <div class="detail-attrs">
+      <div class="detail-attr"><span class="k">Category</span><span class="v" id="detail-category"></span></div>
+      <div class="detail-attr"><span class="k">Location</span><span class="v" id="detail-location"></span></div>
+      <div class="detail-attr"><span class="k">Date</span><span class="v" id="detail-date"></span></div>
+      <div class="detail-attr"><span class="k">Posted by</span><span class="v" id="detail-owner"></span></div>
+    </div>
+
+    <div class="detail-contact">
+      <span class="k">Contact email</span>
+      <a id="detail-email-link" class="mono" href="#" target="_blank" rel="noopener"></a>
+    </div>
+    <p class="detail-contact-note" id="detail-contact-note" hidden></p>
+
+    <div class="modal-actions">
+      <a class="btn btn-primary btn-block" id="btn-detail-email" href="#" target="_blank" rel="noopener">Email this person</a>
+    </div>
+  </div>
+</div>
+
 <div class="toast hide" id="toast"></div>
 
 <script>
 (function(){
   "use strict";
 
-  /* ============================================================
-     CONFIG
-     Base URLs for the two Spring Boot services. Change these if
-     you run them on different ports, or point them at a deployed
-     host later.
-     ============================================================ */
   const API = {
-    lost: "http://localhost:8081/api",   // lost-service  -> Request feed
-    found: "http://localhost:8082/api",  // found-service -> Platform feed
-    user: "http://localhost:8083/api"    // user-service  -> register/login
+    lost: "http://localhost:8081/api",
+    found: "http://localhost:8082/api",
+    user: "http://localhost:8083/api"
   };
 
-  /* ============================================================
-     AUTH
-     Backed by user-service now (register/login are real API calls).
-     Items are still tagged with the signed-in username
-     (ownerUsername on the found/lost APIs) — user-service itself
-     has no relationship to those entities; a user's own posts and
-     requests are just looked up by that username on demand.
-     ============================================================ */
   const CURRENT_USER = { email: "", username: "" };
 
-  /* ============================================================
-     DATA LAYER
-     Talks to the real backend over fetch(). Every other function
-     in this file only calls DataStore — never fetch() directly —
-     so this is the one place that knows about the two services.
-     ============================================================ */
   function apiBase(status){ return status === "lost" ? API.lost : API.found; }
   function apiPath(status){ return status === "lost" ? "/lost-items" : "/found-items"; }
 
-  // Backend <-> frontend field names don't match 1:1 (desc/description,
-  // address/location, date/eventDate, email/contactEmail, ownerId/ownerUsername).
-  // These two functions are the only place that mapping happens.
   function fromApi(item, status){
     return {
       id: String(item.id),
@@ -719,6 +736,39 @@
       createdAt: item.createdAt
     };
   }
+
+  function matchCandidateToPost(candidate, myStatus){
+    const otherStatus = myStatus === "lost" ? "found" : "lost";
+    if(myStatus === "lost"){
+      return {
+        id: String(candidate.foundItemId),
+        name: candidate.foundItemName,
+        desc: candidate.foundItemDescription,
+        date: candidate.foundItemEventDate,
+        address: candidate.foundItemLocation,
+        email: candidate.foundItemContactEmail,
+        category: candidate.foundItemCategory,
+        ownerId: candidate.foundItemOwnerUsername,
+        status: otherStatus,
+        score: candidate.totalConfidenceScore,
+        matchReasoning: candidate.matchReasoning
+      };
+    }
+    return {
+      id: String(candidate.lostItemId),
+      name: candidate.lostItemName,
+      desc: candidate.lostItemDescription,
+      date: candidate.lostItemEventDate,
+      address: candidate.lostItemLocation,
+      email: candidate.lostItemContactEmail,
+      category: candidate.lostItemCategory,
+      ownerId: candidate.lostItemOwnerUsername,
+      status: otherStatus,
+      score: candidate.totalConfidenceScore,
+      matchReasoning: candidate.matchReasoning
+    };
+  }
+
   function toApiPayload(post){
     return {
       name: post.name,
@@ -727,7 +777,8 @@
       location: post.address,
       eventDate: post.date,
       contactEmail: post.email,
-      ownerUsername: post.ownerId
+      ownerUsername: post.ownerId,
+      resolved: !!post.resolved
     };
   }
 
@@ -787,46 +838,64 @@
       return fromApi(created, post.status);
     },
 
-    // Client-side matching for now: pull both feeds and score overlap
-    // against the signed-in user's own posts/requests, same heuristic
-    // as the original prototype. A real version can later call a
-    // Gemini-backed /api/.../recommendations endpoint instead —
-    // this function is the only thing that would need to change.
+    async updateStatus(post, resolved){
+      const url = apiBase(post.status) + apiPath(post.status) + "/" + post.id;
+      const payload = toApiPayload(Object.assign({}, post, { resolved }));
+      const updated = await apiFetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      return fromApi(updated, post.status);
+    },
+
+    async deletePost(post){
+      const url = apiBase(post.status) + apiPath(post.status) + "/" + post.id;
+      await apiFetch(url, { method: "DELETE" });
+    },
+
+    async getMatches(post){
+      const url = apiBase(post.status) + apiPath(post.status) + "/" + post.id + "/matches";
+      const candidates = await apiFetch(url);
+      return candidates.map(c => matchCandidateToPost(c, post.status));
+    },
+
     async getRecommendations(limit){
-      const [found, lost] = await Promise.all([
+      limit = limit || 4;
+      const [myFound, myLost] = await Promise.all([
+        this.getPosts({status:"found", mine:true}),
+        this.getPosts({status:"lost", mine:true})
+      ]);
+      const mine = myFound.concat(myLost);
+
+      const matchResults = await Promise.all(mine.map(async m => {
+        try{
+          const candidates = await this.getMatches(m);
+          if(!candidates.length) return null;
+          return { post: candidates[0], score: candidates[0].score, matchedAgainst: m };
+        } catch(_e){ return null; }
+      }));
+      const withMatches = matchResults.filter(Boolean).sort((a,b)=> b.score - a.score);
+
+      if(withMatches.length >= limit) return withMatches.slice(0, limit);
+
+      const shown = new Set(withMatches.map(r=> r.post.status+":"+r.post.id));
+      const [allFound, allLost] = await Promise.all([
         this.getPosts({status:"found"}),
         this.getPosts({status:"lost"})
       ]);
-      const all = found.concat(lost);
-      const mine = all.filter(p=>p.ownerId===CURRENT_USER.username);
-      const others = all.filter(p=>p.ownerId!==CURRENT_USER.username);
-      const stop = new Set(["with","near","that","this","have","been","from","into","found","lost","the","and","for"]);
-      const words = s => ((s||"").toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!stop.has(w));
+      const recent = allFound.concat(allLost)
+        .filter(p=> p.ownerId !== CURRENT_USER.username)
+        .filter(p=> !shown.has(p.status+":"+p.id))
+        .sort((a,b)=> (b.createdAt||"").localeCompare(a.createdAt||""))
+        .map(post=> ({ post, score:0, matchedAgainst:null }));
 
-      const scored = [];
-      others.forEach(o=>{
-        let best = 0, matchedAgainst = null;
-        mine.forEach(m=>{
-          if(m.status===o.status) return; // only opposite-type matches make sense
-          const mw = new Set(words(m.name+" "+m.desc+" "+m.address));
-          const ow = words(o.name+" "+o.desc+" "+o.address);
-          let score = ow.filter(w=>mw.has(w)).length;
-          if(m.address===o.address) score += 1;
-          if(score>best){ best = score; matchedAgainst = m; }
-        });
-        scored.push({ post:o, score:best, matchedAgainst });
-      });
-      scored.sort((a,b)=> b.score-a.score);
-      const withMatches = scored.filter(s=>s.score>0);
-      const rest = scored.filter(s=>s.score===0);
-      return withMatches.concat(rest).slice(0, limit||4);
+      return withMatches.concat(recent).slice(0, limit);
     }
   };
 
-  /* ============================================================ STATE ============================================================ */
-  const state = { route:"dashboard", libTab:"found" };
+  const state = { route:"dashboard", libTab:"found", libraryItems: [], dashboardItems: [], platformItems: [], requestItems: [] };
 
-  /* ============================================================ HELPERS ============================================================ */
   function $(sel, root){ return (root||document).querySelector(sel); }
   function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
   function escapeHtml(s){
@@ -854,7 +923,6 @@
     return '<div class="empty-state"><strong>Couldn\'t load this</strong><span>'+escapeHtml(err.message)+'</span></div>';
   }
 
-  /* ============================================================ AUTH ============================================================ */
   let authMode = "login";
   function setAuthMode(mode){
     authMode = mode;
@@ -915,7 +983,6 @@
     setAuthMode("login");
   });
 
-  /* ============================================================ NAVIGATION ============================================================ */
   const ROUTE_LABEL = { dashboard:"Homepage", platform:"Platform", request:"Request", library:"Library", settings:"Settings" };
 
   function navigate(route){
@@ -942,7 +1009,6 @@
   $("#btn-profile-shortcut").addEventListener("click", ()=> navigate("settings"));
   $("#btn-user-chip").addEventListener("click", ()=> navigate("settings"));
 
-  /* ============================================================ NOTIFICATIONS ============================================================ */
   function closeNotifPanel(){ $("#notif-panel").hidden = true; }
   $("#btn-bell").addEventListener("click", function(e){
     e.stopPropagation();
@@ -953,11 +1019,11 @@
   });
   document.addEventListener("click", closeNotifPanel);
 
-  /* ============================================================ RENDER: CARD / ROW ============================================================ */
   function cardHtml(p, recoNote){
-    return '<article class="obj-card obj-card--'+p.status+'">'+
+    const info = statusInfo(p);
+    return '<article class="obj-card obj-card--'+p.status+'" data-id="'+p.id+'" data-status="'+p.status+'" tabindex="0" role="button" aria-label="View details for '+escapeHtml(p.name)+'">'+
       '<div class="obj-card__head"><h3 class="obj-card__name">'+escapeHtml(p.name)+'</h3>'+
-      '<span class="pill pill--'+p.status+'">'+(p.status==="lost"?"Lost":"Found")+'</span></div>'+
+      '<span class="pill pill--'+p.status+'">'+info.label+'</span></div>'+
       '<div class="obj-card__media">image placeholder</div>'+
       '<p class="obj-card__desc">'+escapeHtml(p.desc)+'</p>'+
       '<div class="obj-card__meta"><span>'+iconPin+escapeHtml(p.address)+'</span><span>'+iconCal+escapeHtml(p.date)+'</span></div>'+
@@ -965,10 +1031,11 @@
       '</article>';
   }
   function rowHtml(p){
-    return '<article class="obj-row obj-row--'+p.status+'">'+
+    const info = statusInfo(p);
+    return '<article class="obj-row obj-row--'+p.status+'" data-id="'+p.id+'" data-status="'+p.status+'" tabindex="0" role="button" aria-label="View details for '+escapeHtml(p.name)+'">'+
       '<div class="obj-row__media">image<br>placeholder</div>'+
       '<div class="obj-row__body"><h3>'+escapeHtml(p.name)+'</h3><p>'+escapeHtml(p.desc)+'</p></div>'+
-      '<div class="obj-row__meta"><span class="pill pill--'+p.status+'">'+(p.status==="lost"?"Lost":"Found")+'</span>'+
+      '<div class="obj-row__meta"><span class="pill pill--'+p.status+'">'+info.label+'</span>'+
       '<span class="meta-line">'+iconCal+escapeHtml(p.date)+'</span>'+
       '<span class="meta-line">'+iconPin+escapeHtml(p.address)+'</span></div>'+
       '</article>';
@@ -977,15 +1044,47 @@
     return '<div class="empty-state"><strong>Nothing here yet</strong><span>'+escapeHtml(msg)+'</span></div>';
   }
 
-  /* ============================================================ RENDER: PAGES (all async — they fetch, then paint) ============================================================ */
+  function statusInfo(p){
+    if(p.status === "found"){
+      return p.resolved
+        ? { label:"Claimed", next:false }
+        : { label:"Unclaimed", next:true };
+    }
+    return p.resolved
+      ? { label:"Found", next:false }
+      : { label:"In search", next:true };
+  }
+
+  function libraryCardHtml(p){
+    const info = statusInfo(p);
+    return '<article class="obj-card obj-card--'+p.status+'" data-id="'+p.id+'" data-status="'+p.status+'" tabindex="0" role="button" aria-label="View details for '+escapeHtml(p.name)+'">'+
+      '<div class="obj-card__head"><h3 class="obj-card__name">'+escapeHtml(p.name)+'</h3>'+
+      '<span class="pill pill--'+p.status+'">'+info.label+'</span></div>'+
+      '<div class="obj-card__media">image placeholder</div>'+
+      '<p class="obj-card__desc">'+escapeHtml(p.desc)+'</p>'+
+      '<div class="obj-card__meta"><span>'+iconPin+escapeHtml(p.address)+'</span><span>'+iconCal+escapeHtml(p.date)+'</span></div>'+
+      '<div class="obj-card__status">'+
+        '<div class="obj-card__actions">'+
+          '<button class="btn btn-secondary btn-sm" type="button" data-action="toggle-status" data-id="'+p.id+'" data-next="'+info.next+'">Change status</button>'+
+          '<button class="btn btn-danger btn-sm" type="button" data-action="delete-post" data-id="'+p.id+'">Delete</button>'+
+        '</div>'+
+      '</div>'+
+      '</article>';
+  }
+
   async function renderDashboard(){
     const grid = $("#grid-dashboard");
     grid.innerHTML = loadingState();
     try{
       const recs = await DataStore.getRecommendations(4);
-      if(!recs.length){ grid.innerHTML = emptyState("Post or request something to start seeing matches."); return; }
+      if(!recs.length){ state.dashboardItems = []; grid.innerHTML = emptyState("Post or request something to start seeing matches."); return; }
+      state.dashboardItems = recs.map(r=>r.post);
       grid.innerHTML = recs.map(r=>{
-        const note = r.score>0 ? 'Matches your '+(r.matchedAgainst.status==="lost"?"request":"post")+': “'+escapeHtml(r.matchedAgainst.name)+'”' : "Recent on the platform";
+
+        const note = r.score>0
+          ? (r.post.matchReasoning ? escapeHtml(r.post.matchReasoning)
+              : 'Matches your '+(r.matchedAgainst.status==="lost"?"request":"post")+': “'+escapeHtml(r.matchedAgainst.name)+'”')
+          : "Recent on the platform";
         return cardHtml(r.post, note);
       }).join("");
     } catch(err){ grid.innerHTML = errorState(err); }
@@ -998,6 +1097,7 @@
       const q = $("#search-platform").value.trim().toLowerCase();
       let items = await DataStore.getPosts({status:"found"});
       if(q) items = items.filter(matchesQuery(q));
+      state.platformItems = items;
       list.innerHTML = items.length ? items.map(rowHtml).join("") : emptyState("No found-item posts match your search.");
     } catch(err){ list.innerHTML = errorState(err); }
   }
@@ -1008,6 +1108,7 @@
       const q = $("#search-request").value.trim().toLowerCase();
       let items = await DataStore.getPosts({status:"lost"});
       if(q) items = items.filter(matchesQuery(q));
+      state.requestItems = items;
       list.innerHTML = items.length ? items.map(rowHtml).join("") : emptyState("No lost-item requests match your search.");
     } catch(err){ list.innerHTML = errorState(err); }
   }
@@ -1018,10 +1119,47 @@
       const q = $("#search-library").value.trim().toLowerCase();
       let items = await DataStore.getPosts({status:state.libTab, mine:true});
       if(q) items = items.filter(matchesQuery(q));
-      grid.innerHTML = items.length ? items.map(p=>cardHtml(p)).join("") :
+      state.libraryItems = items;
+      grid.innerHTML = items.length ? items.map(p=>libraryCardHtml(p)).join("") :
         emptyState(state.libTab==="found" ? "You haven't posted any found items yet." : "You haven't requested any lost items yet.");
     } catch(err){ grid.innerHTML = errorState(err); }
   }
+
+  $("#grid-library").addEventListener("click", async function(e){
+    const toggleBtn = e.target.closest('[data-action="toggle-status"]');
+    const deleteBtn = e.target.closest('[data-action="delete-post"]');
+
+    if(toggleBtn){
+      const item = state.libraryItems.find(p=>p.id===toggleBtn.dataset.id);
+      if(!item) return;
+      const nextResolved = toggleBtn.dataset.next === "true";
+      toggleBtn.disabled = true;
+      try{
+        await DataStore.updateStatus(item, nextResolved);
+        toast("Status updated.");
+        renderLibrary();
+      } catch(err){
+        toast("Couldn't update status: " + err.message);
+        toggleBtn.disabled = false;
+      }
+      return;
+    }
+
+    if(deleteBtn){
+      const item = state.libraryItems.find(p=>p.id===deleteBtn.dataset.id);
+      if(!item) return;
+      if(!confirm('Delete "'+item.name+'"? This can\'t be undone.')) return;
+      deleteBtn.disabled = true;
+      try{
+        await DataStore.deletePost(item);
+        toast("Deleted.");
+        renderLibrary();
+      } catch(err){
+        toast("Couldn't delete: " + err.message);
+        deleteBtn.disabled = false;
+      }
+    }
+  });
   function matchesQuery(q){
     return p => (p.name+" "+p.desc+" "+p.address).toLowerCase().includes(q);
   }
@@ -1043,7 +1181,6 @@
     });
   });
 
-  /* ============================================================ CREATE MODAL ============================================================ */
   let modalStatus = "found";
   function openModal(defaultStatus){
     modalStatus = defaultStatus || "found";
@@ -1100,7 +1237,63 @@
     }
   });
 
-  /* ============================================================ HOT RELOAD (artifact viewers) ============================================================ */
+  function openDetailModal(post){
+    if(!post) return;
+    const info = statusInfo(post);
+    $("#detail-name").textContent = post.name;
+    $("#detail-sub").innerHTML = '<span class="pill pill--'+post.status+'">'+info.label+'</span>';
+    $("#detail-desc").textContent = post.desc;
+    $("#detail-category").textContent = post.category || "—";
+    $("#detail-location").textContent = post.address || "—";
+    $("#detail-date").textContent = post.date || "—";
+    $("#detail-owner").textContent = post.ownerId || "—";
+
+    const emailLink = $("#detail-email-link");
+    emailLink.textContent = post.email || "—";
+    emailLink.href = post.email ? ("mailto:"+post.email) : "#";
+
+    const isMine = !!(post.ownerId && CURRENT_USER.username && post.ownerId === CURRENT_USER.username);
+    const emailBtn = $("#btn-detail-email");
+    const note = $("#detail-contact-note");
+    if(isMine || !post.email){
+      emailBtn.hidden = true;
+      note.hidden = false;
+      note.textContent = isMine ? "This is your own post." : "No contact email on file.";
+    } else {
+      emailBtn.hidden = false;
+      note.hidden = true;
+      const subject = (post.status==="lost" ? "About your lost item: " : "About your found item: ") + post.name;
+      emailBtn.href = "mailto:"+post.email+"?subject="+encodeURIComponent(subject);
+    }
+    $("#detail-modal-overlay").hidden = false;
+  }
+  function closeDetailModal(){ $("#detail-modal-overlay").hidden = true; }
+  $("#btn-detail-close").addEventListener("click", closeDetailModal);
+  $("#detail-modal-overlay").addEventListener("click", function(e){ if(e.target===this) closeDetailModal(); });
+
+  function wireCardClicks(containerSelector, getItems){
+    const container = $(containerSelector);
+    function openFromEvent(e){
+      if(e.target.closest("[data-action]")) return;
+      const card = e.target.closest(".obj-card, .obj-row");
+      if(!card || !container.contains(card)) return;
+      const items = getItems() || [];
+      const post = items.find(p=> p.id===card.dataset.id && p.status===card.dataset.status);
+      if(post) openDetailModal(post);
+    }
+    container.addEventListener("click", openFromEvent);
+    container.addEventListener("keydown", function(e){
+      if(e.key!=="Enter" && e.key!==" ") return;
+      if(e.target.closest("[data-action]")) return;
+      e.preventDefault();
+      openFromEvent(e);
+    });
+  }
+  wireCardClicks("#grid-dashboard", ()=> state.dashboardItems);
+  wireCardClicks("#list-platform", ()=> state.platformItems);
+  wireCardClicks("#list-request", ()=> state.requestItems);
+  wireCardClicks("#grid-library", ()=> state.libraryItems);
+
   function boot(){
     setAuthMode("login");
   }

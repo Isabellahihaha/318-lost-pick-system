@@ -1,8 +1,5 @@
 package com.csci318.user.web;
 
-/**
- * Payload for POST /api/users/register.
- */
 public class CreateUserRequest {
 
     private String username;

@@ -13,4 +13,5 @@ public class MatchResponse {
     private Double spatialProximityScore;
     private Double temporalProximityScore;
     private String matchStatus; // e.g. "HIGH_CONFIDENCE", "SUGGESTED", "LOW_PROBABILITY"
+    private String matchReasoning; // one-sentence explanation of the text-similarity verdict
 }

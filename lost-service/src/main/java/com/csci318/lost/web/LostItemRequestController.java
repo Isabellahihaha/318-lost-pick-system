@@ -1,6 +1,7 @@
 package com.csci318.lost.web;
 
 import com.csci318.lost.domain.LostItemRequest;
+import com.csci318.lost.service.LostItemMatchingService;
 import com.csci318.lost.service.LostItemRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +22,18 @@ import java.util.List;
 public class LostItemRequestController {
 
     private final LostItemRequestService service;
+    private final LostItemMatchingService matchingService;
 
-    public LostItemRequestController(LostItemRequestService service) {
+    public LostItemRequestController(LostItemRequestService service, LostItemMatchingService matchingService) {
         this.service = service;
+        this.matchingService = matchingService;
     }
 
     @PostMapping
     public ResponseEntity<LostItemResponse> create(@RequestBody CreateLostItemRequest payload) {
         LostItemRequest created = service.create(payload);
-        return ResponseEntity.status(HttpStatus.CREATED).body(LostItemResponse.from(created));
+        List<MatchCandidateResponse> matches = matchingService.findMatches(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(LostItemResponse.from(created, matches));
     }
 
     @GetMapping
@@ -42,6 +46,12 @@ public class LostItemRequestController {
     @GetMapping("/{id}")
     public LostItemResponse get(@PathVariable Long id) {
         return LostItemResponse.from(service.get(id));
+    }
+
+    @GetMapping("/{id}/matches")
+    public List<MatchCandidateResponse> matches(@PathVariable Long id) {
+        LostItemRequest item = service.get(id);
+        return matchingService.findMatches(item);
     }
 
     @PutMapping("/{id}")

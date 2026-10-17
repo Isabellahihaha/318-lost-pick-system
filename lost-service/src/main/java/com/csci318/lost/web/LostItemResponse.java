@@ -3,10 +3,8 @@ package com.csci318.lost.web;
 import com.csci318.lost.domain.LostItemRequest;
 
 import java.time.Instant;
+import java.util.List;
 
-/**
- * What the API returns for a lost-item report.
- */
 public class LostItemResponse {
 
     private final Long id;
@@ -19,10 +17,11 @@ public class LostItemResponse {
     private final String ownerUsername;
     private final boolean resolved;
     private final Instant createdAt;
+    private final List<MatchCandidateResponse> matches;
 
     public LostItemResponse(Long id, String name, String category, String description, String location,
                              String eventDate, String contactEmail, String ownerUsername,
-                             boolean resolved, Instant createdAt) {
+                             boolean resolved, Instant createdAt, List<MatchCandidateResponse> matches) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -33,9 +32,14 @@ public class LostItemResponse {
         this.ownerUsername = ownerUsername;
         this.resolved = resolved;
         this.createdAt = createdAt;
+        this.matches = matches;
     }
 
     public static LostItemResponse from(LostItemRequest entity) {
+        return from(entity, null);
+    }
+
+    public static LostItemResponse from(LostItemRequest entity, List<MatchCandidateResponse> matches) {
         return new LostItemResponse(
                 entity.getId(),
                 entity.getName(),
@@ -46,7 +50,8 @@ public class LostItemResponse {
                 entity.getContactEmail(),
                 entity.getOwnerUsername(),
                 entity.isResolved(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                matches
         );
     }
 
@@ -88,5 +93,9 @@ public class LostItemResponse {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public List<MatchCandidateResponse> getMatches() {
+        return matches;
     }
 }

@@ -1,8 +1,5 @@
 package com.csci318.lost.web;
 
-/**
- * Payload for PUT /api/lost-items/{id}.
- */
 public class UpdateLostItemRequest {
 
     private String name;

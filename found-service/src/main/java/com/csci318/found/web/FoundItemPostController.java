@@ -1,6 +1,7 @@
 package com.csci318.found.web;
 
 import com.csci318.found.domain.FoundItemPost;
+import com.csci318.found.service.FoundItemMatchingService;
 import com.csci318.found.service.FoundItemPostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +22,18 @@ import java.util.List;
 public class FoundItemPostController {
 
     private final FoundItemPostService service;
+    private final FoundItemMatchingService matchingService;
 
-    public FoundItemPostController(FoundItemPostService service) {
+    public FoundItemPostController(FoundItemPostService service, FoundItemMatchingService matchingService) {
         this.service = service;
+        this.matchingService = matchingService;
     }
 
     @PostMapping
     public ResponseEntity<FoundItemResponse> create(@RequestBody CreateFoundItemRequest payload) {
         FoundItemPost created = service.create(payload);
-        return ResponseEntity.status(HttpStatus.CREATED).body(FoundItemResponse.from(created));
+        List<MatchCandidateResponse> matches = matchingService.findMatches(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(FoundItemResponse.from(created, matches));
     }
 
     @GetMapping
@@ -42,6 +46,12 @@ public class FoundItemPostController {
     @GetMapping("/{id}")
     public FoundItemResponse get(@PathVariable Long id) {
         return FoundItemResponse.from(service.get(id));
+    }
+
+    @GetMapping("/{id}/matches")
+    public List<MatchCandidateResponse> matches(@PathVariable Long id) {
+        FoundItemPost item = service.get(id);
+        return matchingService.findMatches(item);
     }
 
     @PutMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.csci318.lost.service;
 
 import com.csci318.lost.domain.LostItemRequest;
+import com.csci318.lost.event.LostItemEventPublisher;
 import com.csci318.lost.repository.LostItemRequestRepository;
 import com.csci318.lost.web.CreateLostItemRequest;
 import com.csci318.lost.web.UpdateLostItemRequest;
@@ -13,9 +14,11 @@ import java.util.NoSuchElementException;
 public class LostItemRequestService {
 
     private final LostItemRequestRepository repository;
+    private final LostItemEventPublisher eventPublisher;
 
-    public LostItemRequestService(LostItemRequestRepository repository) {
+    public LostItemRequestService(LostItemRequestRepository repository, LostItemEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public LostItemRequest create(CreateLostItemRequest payload) {
@@ -33,7 +36,9 @@ public class LostItemRequestService {
                 payload.getContactEmail(),
                 payload.getOwnerUsername()
         );
-        return repository.save(entity);
+        LostItemRequest saved = repository.save(entity);
+        eventPublisher.publishLostItemReported(saved);
+        return saved;
     }
 
     public List<LostItemRequest> list(String ownerUsername, String search) {

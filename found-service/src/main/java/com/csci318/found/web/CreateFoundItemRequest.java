@@ -1,8 +1,5 @@
 package com.csci318.found.web;
 
-/**
- * Payload for POST /api/found-items.
- */
 public class CreateFoundItemRequest {
 
     private String name;

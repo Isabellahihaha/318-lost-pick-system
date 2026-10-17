@@ -1,8 +1,5 @@
 package com.csci318.lost.web;
 
-/**
- * Payload for POST /api/lost-items.
- */
 public class CreateLostItemRequest {
 
     private String name;

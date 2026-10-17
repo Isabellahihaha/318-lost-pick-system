@@ -1,0 +1,38 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: ai-matching-service
+  cloud:
+    function:
+      definition: foundItemReported;lostItemReported
+    stream:
+      bindings:
+        foundItemReported-in-0:
+          destination: found-item-reported
+          group: matching-service
+        lostItemReported-in-0:
+          destination: lost-item-reported
+          group: matching-service
+        potentialMatchFound-out-0:
+          destination: potential-match-found
+          content-type: application/json
+      kafka:
+        binder:
+          brokers: localhost:9092
+          auto-create-topics: true
+          producer-properties:
+            max.block.ms: 3000
+
+openai:
+  api:
+    key: ${GEMINI_API_KEY:mock-key}
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent
+
+lost:
+  service:
+    url: http://localhost:8081
+found:
+  service:
+    url: http://localhost:8082

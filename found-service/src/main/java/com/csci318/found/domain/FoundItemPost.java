@@ -9,10 +9,6 @@ import jakarta.persistence.Table;
 
 import java.time.Instant;
 
-/**
- * A single found-item report: "I found this, is it yours?"
- * This is the entity behind the Platform feed.
- */
 @Entity
 @Table(name = "found_item_posts")
 public class FoundItemPost {
@@ -31,7 +27,6 @@ public class FoundItemPost {
 
     private String location;
 
-    /** Free-text date the item was found, e.g. "14 Sep 2026" — kept as text per the project's data spec. */
     private String eventDate;
 
     private String contactEmail;
@@ -44,7 +39,7 @@ public class FoundItemPost {
     private Instant createdAt = Instant.now();
 
     protected FoundItemPost() {
-        // required by JPA
+
     }
 
     public FoundItemPost(String name, String category, String description, String location,

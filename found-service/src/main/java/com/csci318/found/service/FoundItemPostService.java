@@ -1,6 +1,7 @@
 package com.csci318.found.service;
 
 import com.csci318.found.domain.FoundItemPost;
+import com.csci318.found.event.FoundItemEventPublisher;
 import com.csci318.found.repository.FoundItemPostRepository;
 import com.csci318.found.web.CreateFoundItemRequest;
 import com.csci318.found.web.UpdateFoundItemRequest;
@@ -13,9 +14,11 @@ import java.util.NoSuchElementException;
 public class FoundItemPostService {
 
     private final FoundItemPostRepository repository;
+    private final FoundItemEventPublisher eventPublisher;
 
-    public FoundItemPostService(FoundItemPostRepository repository) {
+    public FoundItemPostService(FoundItemPostRepository repository, FoundItemEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public FoundItemPost create(CreateFoundItemRequest payload) {
@@ -33,7 +36,9 @@ public class FoundItemPostService {
                 payload.getContactEmail(),
                 payload.getOwnerUsername()
         );
-        return repository.save(entity);
+        FoundItemPost saved = repository.save(entity);
+        eventPublisher.publishFoundItemReported(saved);
+        return saved;
     }
 
     public List<FoundItemPost> list(String ownerUsername, String search) {

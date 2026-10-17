@@ -9,21 +9,6 @@ import jakarta.persistence.Table;
 
 import java.time.Instant;
 
-/**
- * A registered account on the platform.
- *
- * Deliberately does NOT hold its own found-posts / lost-requests as
- * relationships here: those entities live in found-service and
- * lost-service, each with its own separate database. There is no
- * cross-service foreign key in this architecture. A user's own posts
- * and requests are fetched on demand from those services' existing
- * "?owner=username" filters (see FoundItemPostController / LostItemRequestController),
- * never stored or duplicated on this entity.
- *
- * Password is stored as plain text for now, matching the project's
- * current placeholder-auth scope (no hashing/claims model yet). This
- * is a known gap to revisit, not an oversight.
- */
 @Entity
 @Table(name = "users")
 public class User {
@@ -45,7 +30,7 @@ public class User {
     private Instant createdAt = Instant.now();
 
     protected User() {
-        // required by JPA
+
     }
 
     public User(String username, String email, String password) {

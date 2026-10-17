@@ -9,10 +9,6 @@ import jakarta.persistence.Table;
 
 import java.time.Instant;
 
-/**
- * A single lost-item report: "I lost this, has anyone seen it?"
- * This is the entity behind the Request feed.
- */
 @Entity
 @Table(name = "lost_item_requests")
 public class LostItemRequest {
@@ -31,7 +27,6 @@ public class LostItemRequest {
 
     private String location;
 
-    /** Free-text date the item was lost, e.g. "14 Sep 2026" — kept as text per the project's data spec. */
     private String eventDate;
 
     private String contactEmail;
@@ -44,7 +39,7 @@ public class LostItemRequest {
     private Instant createdAt = Instant.now();
 
     protected LostItemRequest() {
-        // required by JPA
+
     }
 
     public LostItemRequest(String name, String category, String description, String location,

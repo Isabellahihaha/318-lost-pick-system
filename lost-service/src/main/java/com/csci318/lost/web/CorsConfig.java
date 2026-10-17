@@ -5,10 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * Lets the static frontend (served from a different origin/port) call this API.
- * Add more origins to app.cors.allowed-origins in application.properties as needed.
- */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

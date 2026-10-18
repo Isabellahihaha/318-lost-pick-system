@@ -1,41 +1,47 @@
-# Technical Architecture
+# Lost & Found Platform
 
-## Microservice Architecture
-This application is structured as a multi-module Maven microservice architecture comprising four core service domains:
-1. **User Service** (`user-service`) – Manages user identity, registration, roles, and profiles.
-2. **Lost Service** (`lost-service`) – Manages user-submitted lost item reports.
-3. **Found Service** (`found-service`) – Manages found item registries and item statuses.
-4. **Matching Service** (`matching-service`) – Integrates AI/LangChain4j to handle intelligent text analysis, scoring, and automated item cross-referencing.
-5. **Claim & Recovery Service** (`claim-service`) – Manages ownership verification workflows and recovery state tracking.
+CSCI318 group project — A lost-found platform with AI-assisted match scoring between items and requests.
 
-## Layered Architecture
-Each microservice module is structured into four distinct layers:
-1. **Presentation Layer** (Controllers - `@RestController`)
-2. **Service Layer** (Business Logic - `@Service`)
-3. **Domain Layer** (Core Domain Models & Rules - `@Entity` / Aggregates)
-4. **Data Access Layer** (Repositories - `@Repository` / Spring Data JPA)
+## Tech stack / install before you start
+You need to set these on your PATH before running anything:
 
-## Repository Structure 
-The project is structured as a multi-module Maven repository (`318-lost-pick-system`):
-- `user-service`: Handles user authentication records and profile details.
-- `lost-service`: Module for browsing registries and posting lost item requests.
-- `found-service`: Module for managing found item logs and item status updates.
-- `matching-service`: AI-powered engine leveraging LangChain4j for natural language processing and match scoring.
-- `claim-service`: Workflow manager for handling proof submissions and finder verifications.
+| Tool | Version | Why |
+| :--- | :--- | :--- |
+| **JDK** | 21 | All backend services target Java 21 (`<java.version>21</java.version>` in the root `pom.xml`) |
+| **Maven** | 3.9+ | Builds and runs every service (`mvn spring-boot:run`) |
+| **Python** | 3.x | Serves the static frontend (`py -m http.server` / `python3 -m http.server`) |
+| **Docker** | Any recent version | Runs the local Kafka broker (`docker compose up -d`) — see Event-driven matching |
 
-## Technology Stack
-- **JDK & Build**: Java 21, Apache Maven (Multi-module POM)
-- **Framework**: Spring Boot 3.4.x
-    - **Controller Layer**: `@RestController` 
-    - **Service Layer**: `@Service`
-    - **Domain Layer**: `@Entity` / DDD Aggregates
-    - **Data Access Layer**: `@Repository` / Spring Data JPA
-- **Database**: H2 in-memory database for local development and testing, SQLite/JPA persistence stores.
-- **Event Broker**: Apache Kafka for asynchronous event-driven messaging (e.g., `LostItemReported`, `PotentialMatchFound`).
-- **AI / Agentic Integration**: LangChain4j (`langchain4j-open-ai`, `langchain4j-google-ai-gemini`) for smart text extraction, follow-up generation, and semantic match ranking.
-- **Unit & Integration Testing**: `MockMvc`, `@SpringBootTest`, `JUnit 5`
+**Database:** Uses SQLite, pulled in automatically through Maven, so no need to set up a database. H2 is used by `user-service`. Both are embedded.
 
-## Design Principles
-- **Domain-Driven Modularization**: Each microservice encapsulates its own bounded context, domain entities, repositories, and services.
-- **Contract-First API Design**: REST APIs follow standardized HTTP methods, status codes (`200`, `201`, `400`, `404`, `500`), and JSON payloads defined via OpenAPI 3.0.
-- **Asynchronous Event-Driven Integration**: Decoupled communication between services via Apache Kafka for real-time match processing and claim status updates.
+**!!REGARDING AI!!:** A Google AI Studio Gemini API key is required for `matching-service`'s real AI-judged match scoring and reasoning (otherwise it's just keyword match). See **Configuration**. The project runs fine without one, just with substantially lower quality, and no reasoning given for matches.
+
+## Key libraries per service
+Handled by Maven, nothing to install manually:
+
+* **lost-service / found-service** — Spring Boot Web, Spring Data JPA, SQLite JDBC + Hibernate Community Dialects, RestTemplate-based clients to each other and to matching-service, Spring Cloud Stream (Kafka binder) for publishing `LostItemReported` and `FoundItemReported` events.
+* **user-service** — Spring Boot Web, Spring Data JPA, H2 (in-memory).
+* **claim-recovery-service** — Spring Boot Web, Spring Data JPA, SQLite JDBC. Manages endpoints for initiating item claims, submitting ownership verification proof, updating recovery statuses, and real-time notifications[cite: 1].
+* **Matching-Service** — Spring Boot Web, Spring Boot Validation, Lombok, RestTemplate, calls to the Gemini generateContent API, Spring Cloud Stream (Kafka binder) for consuming events and publishing `PotentialMatchFound`.
+* **frontend** — plain HTML/CSS/JS, no build step, no Node/npm required.
+
+## Services & ports
+
+| Service | Port | Datastore |
+| :--- | :--- | :--- |
+| **lost-service** | 8081 | SQLite (`lostservice.db`) |
+| **found-service** | 8082 | SQLite (`foundservice.db`) |
+| **user-service** | 8083 | H2 (in-memory) |
+| **claim-recovery-service** | 8084 | SQLite (`claimservice.db`)[cite: 5] |
+| **Matching-Service** | 8085 | — (stateless, calls Gemini) |
+| **frontend (static)** | 5500 | — |
+
+Each BE module communicates with each other via plain HTTP and works independently. If a module isn't active, calls from others return no matches instead of outright failing.
+
+## Configuration
+
+`Matching-Service` reads its Gemini API key from the `GEMINI_API_KEY` environment variable (`application.yml`: `key: ${GEMINI_API_KEY:mock-key}`). To set it for a session, in the terminal that will run `Matching-Service`:
+
+**Windows PowerShell:**
+```powershell
+$env:GEMINI_API_KEY = "your-real-key-here"
